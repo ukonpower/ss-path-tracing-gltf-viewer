@@ -130,4 +130,10 @@ exports.default = gulp.series(
 	gulp.parallel( brSync, watch )
 );
 
+exports.build = gulp.series( 
+	clean,
+	gulp.parallel( buildWebpack, buildSass ),
+	copy,
+);
+
 exports.lint = gulp.task( lint );
