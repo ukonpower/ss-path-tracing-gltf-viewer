@@ -42,8 +42,11 @@ html,body{
 	justify-content: center;
 	align-items: center;
 
+	background-color: black;
+
 	[ data-loaded="true" ] & {
 		opacity: 0;
+		background-color: none;
 	}
 
 	&-inner{
