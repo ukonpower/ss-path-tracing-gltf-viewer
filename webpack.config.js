@@ -1,3 +1,5 @@
+var path = require('path');
+
 module.exports = {
     mode: 'development',
     entry: {
@@ -12,18 +14,29 @@ module.exports = {
                 exclude: /node_modules/,
                 use: 'ts-loader'
             },
-            {
-                test: /\.(glsl|vs|fs)$/,
-                loader: 'shader-loader',
-                options: {
-                    glsl: {
-                        chunkPath: './src/glsl-chunks'
-                    }
-                }
-            }
+			{
+				test: /\.(vs|fs|glsl)$/,
+				exclude: /node_modules/,
+				use: [
+					'raw-loader',
+					{
+						loader: 'glslify-loader',
+						options: {
+							transform: [
+								['glslify-hex'],
+								['glslify-import']
+							],
+							basedir: './src/glsl-chunks'
+						}
+					}
+				]
+			}
         ]
     },
     resolve: {
-        extensions: [".ts", ".js"]
+		extensions: [".ts", ".js"],
+		alias: {
+            "@OrayTracingRenderer": path.resolve(__dirname, 'src/ts/libs/OrayTracingRenderer/src')
+        },
     }
 };

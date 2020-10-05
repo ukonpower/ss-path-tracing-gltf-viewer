@@ -10,7 +10,13 @@
     ],
     "typeRoots": ["node_modules/@types"],
     "rootDir": "./src/ts",
-    "outDir": "./public"
+	"outDir": "./public",
+	"baseUrl": ".",
+	"paths": {
+		"@OrayTracingRenderer": [
+			"src/ts/libs/OrayTracingRenderer/src"
+		]
+	}
   },
   "include": ["./src/"]
 }

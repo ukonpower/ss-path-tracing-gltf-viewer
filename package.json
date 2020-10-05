@@ -38,6 +38,7 @@
   },
   "dependencies": {
     "ore-three-ts": "^1.0.4",
+    "simple-dropzone": "^0.7.1",
     "three": "^0.121.1"
   }
 }

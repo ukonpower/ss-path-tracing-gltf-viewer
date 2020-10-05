@@ -19,12 +19,67 @@ $sp-width: 800px;
 }
 
 html,body{
-	background-color: #000;
 	width: 100%;
 	height: 100%;
+	color: white;
 }
 
 #canvas{
+	position: absolute;
 	width: 100%;
 	height: 100%;
+	z-index: -99;
+	pointer-events: auto;
 }
+
+.dropzone {
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+
+	[ data-loaded="true" ] & {
+		opacity: 0;
+	}
+
+	&-inner{
+		border: 3px dashed #bbb;
+		
+		border-radius: 50px;
+		width: 70%;
+		height: 70%;
+		
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		align-items: center;
+
+	}
+
+	p {
+		color: #aaa;
+		font-size: 25px;
+		font-weight: bold;
+		user-select: none;
+	}
+	
+	.file-input {
+		display: none;
+		&-label{
+			color: #aaa;
+			font-size: 18px;
+			font-weight: bold;
+			cursor: pointer;
+
+			[ data-loaded="true" ] & {
+				pointer-events: none;
+			}
+		}
+	}
+
+}
+

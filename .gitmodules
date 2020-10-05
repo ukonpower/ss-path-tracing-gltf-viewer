@@ -1,0 +1,3 @@
+[submodule "src/ts/libs/OrayTracingRenderer"]
+	path = src/ts/libs/OrayTracingRenderer
+	url = git@github.com:ukonpower/OrayTracingRenderer.git
