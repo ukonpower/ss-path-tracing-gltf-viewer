@@ -1,0 +1,132 @@
+html,body{
+	width: 100%;
+	height: 100%;
+	overflow: hidden;
+	background-color: #111;
+}
+
+$headerSize: 50px;
+
+.header {
+	z-index: 99;
+	position: relative;
+	width: 100%;
+	height: $headerSize;
+	left: 0; top: 0;
+	background-color: #111;
+	border-bottom: solid 1px #222;
+
+	&-inner { 
+		position: relative;
+		width: 100%;
+		height: 100%;
+		padding: 0 20px;
+		display: flex;
+		align-items: center;
+	}
+
+	&-title {
+		color: #999;
+		display: inline-block;
+		font-weight: bold;
+		font-size: 20px;
+	}
+
+}
+
+.wrapper {
+	pointer-events: none;
+	position: relative;
+	width: 100%;
+	height: calc(100% - #{$headerSize});
+	display: flex;
+}
+
+$panelSize: 300px;
+.canvas-wrapper {
+	pointer-events: auto;
+	position: relative;
+	width: calc( 100% - #{$panelSize} );
+	height: 100%;
+
+	#canvas{
+		position: relative;
+		width: 100%;
+		height: 100%;
+	}
+}
+
+.control {
+	position: relative;
+	width: $panelSize;
+	height: 100%;
+	background-color: #111;
+	overflow-y: scroll;
+
+	color: #888;
+	font-weight: bold;
+	
+	&-inner{
+		position: relative;
+		padding: 10px;
+	}
+	
+}
+
+.dropzone {
+	pointer-events: all;
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	
+	left: 0; top: 0;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+
+	background-color: black;
+
+	[ data-loaded="true" ] & {
+		opacity: 0;
+		background-color: none;
+		pointer-events: none;
+	}
+
+	&-inner{
+		border: 3px dashed #bbb;
+		
+		border-radius: 50px;
+		width: 70%;
+		height: 70%;
+		
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		align-items: center;
+
+	}
+
+	p {
+		color: #aaa;
+		font-size: 25px;
+		font-weight: bold;
+		user-select: none;
+	}
+	
+	.file-input {
+		display: none;
+		&-label{
+			color: #aaa;
+			font-size: 18px;
+			font-weight: bold;
+			cursor: pointer;
+
+			[ data-loaded="true" ] & {
+				pointer-events: none;
+			}
+		}
+	}
+
+}
+

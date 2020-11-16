@@ -3,17 +3,18 @@ import * as THREE from 'three';
 import * as OrayTracingRenderer from '@OrayTracingRenderer';
 import { SimpleDropzone } from 'simple-dropzone';
 
-import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
+import { EditorScene } from './EditorScene';
 
 export class MainScene extends ORE.BaseScene {
 
 	private commonUniforms: ORE.Uniforms;
 
-	private simpleDropZone: any;
+	private editorScene: EditorScene;
 
+	private simpleDropZone: any;
 	private orayRenderer: OrayTracingRenderer.Renderer;
-	private controls: OrbitControls;
+	private preOrayRenderer: OrayTracingRenderer.Renderer;
 	private isSceneCreated: boolean = false;
 
 	private currentGLTFScene: THREE.Group;
@@ -37,17 +38,85 @@ export class MainScene extends ORE.BaseScene {
 		super.onBind( gProps );
 
 		this.renderer = this.gProps.renderer;
+		this.orayRenderer = new OrayTracingRenderer.Renderer( this.renderer, new THREE.Vector2( 1, 1 ) );
+		this.preOrayRenderer = new OrayTracingRenderer.Renderer( this.renderer, new THREE.Vector2( 1, 1 ) );
 
-		this.orayRenderer = new OrayTracingRenderer.Renderer( this.renderer, this.gProps.resizeArgs.windowPixelSize.multiplyScalar( 0.8 ) );
+		this.initScene();
+		this.initDropZone();
+		this.resizeRenderer();
 
-		this.controls = new OrbitControls( this.camera, document.querySelector( '.dropzone' ) );
-		this.controls.addEventListener( 'change', () => {
+	}
 
-			this.orayRenderer.resetFrame();
+	private initScene() {
+
+		this.editorScene = new EditorScene( this.commonUniforms );
+		this.scene.add( this.editorScene );
+
+
+		this.isSceneCreated = true;
+
+	}
+
+	public animate( deltaTime: number ) {
+
+		this.commonUniforms.time.value = this.time;
+
+		if ( this.isSceneCreated ) {
+
+			this.editorScene.update();
+
+			this.editorScene.visible = false;
+			this.switchMaterial( true );
+
+			this.renderer.setRenderTarget( this.editorScene.previewRenderTarget );
+			this.preOrayRenderer.render( this.scene, this.editorScene.renderCamera );
+			this.renderer.setRenderTarget( null );
+
+			this.editorScene.visible = true;
+			this.switchMaterial( false );
+
+			this.renderer.render( this.scene, this.editorScene.editorCamera );
+
+		}
+
+	}
+
+	private switchMaterial( isOray: boolean ) {
+
+		this.currentGLTFScene && this.currentGLTFScene.traverse( obj => {
+
+			if ( ( obj as THREE.Mesh ).isMesh ) {
+
+				( obj as THREE.Mesh ).material = isOray ? obj.userData.orayMaterial : obj.userData.baseMaterial;
+
+			}
 
 		} );
 
-		this.initDropZone();
+	}
+
+	public resizeRenderer() {
+
+		let size = new THREE.Vector2( window.innerWidth, window.innerHeight );
+		let previewSize = size.clone().multiplyScalar( 0.3 );
+
+		this.orayRenderer.resize( size );
+		this.preOrayRenderer.resize( previewSize );
+
+		this.editorScene.resizeRenderSize( previewSize );
+
+	}
+
+	public onResize( args: ORE.ResizeArgs ) {
+
+		super.onResize( args );
+
+		let wrapper = document.querySelector( '.canvas-wrapper' ) as HTMLElement;
+		let size = new THREE.Vector2( wrapper.clientWidth, wrapper.clientHeight );
+
+		this.renderer.setSize( size.x, size.y );
+
+		this.editorScene.resize( size );
 
 	}
 
@@ -57,6 +126,9 @@ export class MainScene extends ORE.BaseScene {
 			document.querySelector( '.dropzone' ),
 			document.querySelector( '.file-input' )
 		);
+
+		document.body.setAttribute( 'data-loaded', 'true' );
+		this.load( './assets/webgl-path-tracing.glb' );
 
 		this.simpleDropZone.on( 'drop', ( { files } ) => {
 
@@ -74,22 +146,6 @@ export class MainScene extends ORE.BaseScene {
 
 	private load( url: string ) {
 
-		let loader = new GLTFLoader();
-
-		loader.load( url, ( gltf ) => {
-
-			if ( this.currentGLTFScene ) this.scene.remove( this.currentGLTFScene );
-
-			this.currentGLTFScene = gltf.scene;
-
-			this.scene.add( gltf.scene );
-
-			this.initScene();
-
-			document.body.setAttribute( 'data-loaded', 'true' );
-
-		} );
-
 		let cubeTexLoader = new THREE.CubeTextureLoader();
 		cubeTexLoader.load( [
 			'./assets/img/cubemap/Bridge2/posx.jpg',
@@ -104,52 +160,45 @@ export class MainScene extends ORE.BaseScene {
 
 		} );
 
-	}
+		let loader = new GLTFLoader();
 
-	private initScene() {
+		loader.load( url, ( gltf ) => {
 
-		this.orayRenderer.resetFrame();
+			if ( this.currentGLTFScene ) this.scene.remove( this.currentGLTFScene );
 
-		this.camera.position.set( 3, 3, 10 );
-		this.controls.target = new THREE.Vector3( 0, 0, 0 );
+			this.currentGLTFScene = gltf.scene;
 
-		this.scene.traverse( ( obj: THREE.Mesh ) => {
+			this.scene.add( gltf.scene );
 
-			if ( obj.isMesh ) {
+			document.body.setAttribute( 'data-loaded', 'true' );
 
-				obj.material = new OrayTracingRenderer.Material( {
-					baseMaterial: obj.material
-				} );
+			this.currentGLTFScene.traverse( ( obj: THREE.Mesh ) => {
 
-				if ( obj.name.indexOf( 'Light' ) > - 1 ) {
+				if ( obj.isMesh ) {
 
-					( obj.material as OrayTracingRenderer.Material ).emission = new THREE.Vector3( 10, 10, 10 );
+					let baseMat = obj.material;
+					let orayMaterial = new OrayTracingRenderer.Material( {
+						baseMaterial: baseMat
+					} );
+
+					obj.material = orayMaterial;
+
+					if ( obj.name.indexOf( 'Light' ) > - 1 ) {
+
+						( obj.material as OrayTracingRenderer.Material ).emission = new THREE.Vector3( 10, 10, 10 );
+
+					}
+
+					obj.userData.baseMaterial = baseMat;
+					obj.userData.orayMaterial = orayMaterial;
 
 				}
 
-			}
+			} );
+
+			this.preOrayRenderer.resetFrame();
 
 		} );
-
-		this.isSceneCreated = true;
-
-	}
-
-	public animate( deltaTime: number ) {
-
-		if ( this.isSceneCreated ) {
-
-			this.controls.update();
-
-			this.orayRenderer.render( this.scene, this.camera );
-
-		}
-
-	}
-
-	public onResize( args: ORE.ResizeArgs ) {
-
-		super.onResize( args );
 
 	}
 

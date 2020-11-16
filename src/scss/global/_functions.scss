@@ -1,0 +1,9 @@
+// 比率を計算する
+@function calcParPixel($current, $base) {
+	@return $current / $base * 100%;
+}
+
+// アスペクト比を計算
+@function calcAspect($width, $height) {
+	@return $width / $height * 100%;
+}
