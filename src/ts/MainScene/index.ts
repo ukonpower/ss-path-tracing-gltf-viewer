@@ -144,8 +144,8 @@ export class MainScene extends ORE.BaseScene {
 			document.querySelector( '.file-input' )
 		);
 
-		document.body.setAttribute( 'data-loaded', 'true' );
-		this.load( './assets/webgl-path-tracing.glb' );
+		// document.body.setAttribute( 'data-loaded', 'true' );
+		// this.load( './assets/webgl-path-tracing.glb' );
 
 		this.simpleDropZone.on( 'drop', ( { files } ) => {
 
