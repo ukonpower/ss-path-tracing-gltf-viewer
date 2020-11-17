@@ -8,16 +8,14 @@ import { EditorScene } from './EditorScene';
 
 export class MainScene extends ORE.BaseScene {
 
-	private commonUniforms: ORE.Uniforms;
-
-	private editorScene: EditorScene;
-
-	private simpleDropZone: any;
 	private orayRenderer: OrayTracingRenderer.Renderer;
 	private preOrayRenderer: OrayTracingRenderer.Renderer;
-	private isSceneCreated: boolean = false;
 
+	private commonUniforms: ORE.Uniforms;
+	private editorScene: EditorScene;
 	private currentGLTFScene: THREE.Group;
+
+	private simpleDropZone: any;
 
 	constructor() {
 
@@ -50,10 +48,13 @@ export class MainScene extends ORE.BaseScene {
 	private initScene() {
 
 		this.editorScene = new EditorScene( this.commonUniforms );
+		this.editorScene.addEventListener( 'sceneupdate', () => {
+
+			this.preOrayRenderer.resetFrame();
+
+		} );
+
 		this.scene.add( this.editorScene );
-
-
-		this.isSceneCreated = true;
 
 	}
 
@@ -61,23 +62,19 @@ export class MainScene extends ORE.BaseScene {
 
 		this.commonUniforms.time.value = this.time;
 
-		if ( this.isSceneCreated ) {
+		this.editorScene.update();
 
-			this.editorScene.update();
+		this.editorScene.visible = false;
+		this.switchMaterial( true );
 
-			this.editorScene.visible = false;
-			this.switchMaterial( true );
+		this.renderer.setRenderTarget( this.editorScene.previewRenderTarget );
+		this.preOrayRenderer.render( this.scene, this.editorScene.renderCamera );
+		this.renderer.setRenderTarget( null );
 
-			this.renderer.setRenderTarget( this.editorScene.previewRenderTarget );
-			this.preOrayRenderer.render( this.scene, this.editorScene.renderCamera );
-			this.renderer.setRenderTarget( null );
+		this.editorScene.visible = true;
+		this.switchMaterial( false );
 
-			this.editorScene.visible = true;
-			this.switchMaterial( false );
-
-			this.renderer.render( this.scene, this.editorScene.editorCamera );
-
-		}
+		this.renderer.render( this.scene, this.editorScene.editorCamera );
 
 	}
 
@@ -98,7 +95,7 @@ export class MainScene extends ORE.BaseScene {
 	public resizeRenderer() {
 
 		let size = new THREE.Vector2( window.innerWidth, window.innerHeight );
-		let previewSize = size.clone().multiplyScalar( 0.3 );
+		let previewSize = size.clone().multiplyScalar( 0.4 );
 
 		this.orayRenderer.resize( size );
 		this.preOrayRenderer.resize( previewSize );
@@ -120,6 +117,24 @@ export class MainScene extends ORE.BaseScene {
 
 	}
 
+	public onTouchStart( cursor: ORE.Cursor, e: MouseEvent ) {
+
+		this.editorScene.touchStart( cursor );
+
+	}
+
+	public onTouchMove( cursor: ORE.Cursor, e: MouseEvent ) {
+
+		this.editorScene.touchMove( cursor );
+
+	}
+
+	public onTouchEnd( cursor: ORE.Cursor, e: MouseEvent ) {
+
+		this.editorScene.touchEnd( cursor );
+
+	}
+
 	private initDropZone() {
 
 		this.simpleDropZone = new SimpleDropzone(
@@ -127,8 +142,8 @@ export class MainScene extends ORE.BaseScene {
 			document.querySelector( '.file-input' )
 		);
 
-		document.body.setAttribute( 'data-loaded', 'true' );
-		this.load( './assets/webgl-path-tracing.glb' );
+		// document.body.setAttribute( 'data-loaded', 'true' );
+		// this.load( './assets/webgl-path-tracing.glb' );
 
 		this.simpleDropZone.on( 'drop', ( { files } ) => {
 

@@ -22,6 +22,8 @@ export class Viewer extends THREE.Mesh {
 
 		super( geo, mat );
 
+		this.frustumCulled = false;
+
 	}
 
 }

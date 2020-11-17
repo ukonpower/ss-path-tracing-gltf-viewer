@@ -1,18 +1,24 @@
 import * as THREE from 'three';
-import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import * as ORE from 'ore-three-ts';
 
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
+import { TransformControls } from 'three/examples/jsm/controls/TransformControls';
+import { EasyRaycaster } from './EasyRaycaster';
 import { Viewer } from './Viewer';
 
 export class EditorScene extends THREE.Object3D {
 
+	private wrapperElm: HTMLElement;
+
 	private commonUniforms: ORE.Uniforms;
 	public editorCamera: THREE.PerspectiveCamera;
 	public renderCamera: THREE.PerspectiveCamera;
-	public controls: OrbitControls;
+	public orbitControls: OrbitControls;
+	public transformControls: TransformControls;
 
 	private viewer: Viewer;
 	public previewRenderTarget: THREE.WebGLRenderTarget;
+	private eRay: EasyRaycaster;
 
 	constructor( parentUniforms?: ORE.Uniforms ) {
 
@@ -39,15 +45,7 @@ export class EditorScene extends THREE.Object3D {
 
 		this.editorCamera = new THREE.PerspectiveCamera();
 		this.editorCamera.position.set( - 3, 3, 10 );
-
-		this.controls = new OrbitControls( this.editorCamera, document.querySelector( '.canvas-wrapper' ) );
-		this.controls.addEventListener( 'change', () => {
-
-			this.dispatchEvent( {
-				type: 'cameramove'
-			} );
-
-		} );
+		this.add( this.editorCamera );
 
 		this.renderCamera = new THREE.PerspectiveCamera();
 		this.renderCamera.far = 20;
@@ -71,17 +69,89 @@ export class EditorScene extends THREE.Object3D {
 		light.intensity = 0.5;
 		this.add( light );
 
-		this.previewRenderTarget = new THREE.WebGLRenderTarget( 500, 500 );
+		this.previewRenderTarget = new THREE.WebGLRenderTarget( 1, 1 );
 		this.commonUniforms.previewTex.value = this.previewRenderTarget.texture;
 
 		this.viewer = new Viewer( this.commonUniforms );
 		this.add( this.viewer );
 
+		this.initControls();
+		this.initEray();
+
+	}
+
+	private initControls() {
+
+		this.wrapperElm = document.querySelector( '.canvas-wrapper' );
+
+		this.orbitControls = new OrbitControls( this.editorCamera, this.wrapperElm );
+
+		this.transformControls = new TransformControls( this.editorCamera, this.wrapperElm );
+		this.add( this.transformControls );
+
+		this.transformControls.attach( this.renderCamera );
+		this.transformControls.addEventListener( 'dragging-changed', ( e ) =>{
+
+			this.orbitControls.enabled = ! e.value;
+
+
+		} );
+
+		this.transformControls.addEventListener( 'change', ( e ) =>{
+
+			this.renderCamera.lookAt( 0, 0.5, 0 );
+
+			this.dispatchEvent( {
+				type: 'sceneupdate'
+			} );
+
+		} );
+
+	}
+
+	private initEray() {
+
+		this.eRay = new EasyRaycaster();
+
 	}
 
 	public update() {
 
-		this.controls.update();
+		this.orbitControls.update();
+
+	}
+
+	public touchStart( cursor: ORE.Cursor ) {
+
+
+		console.log( "aaa" );
+
+		this.eRay.touchStart( this.getCursorPos( cursor.position ), this.editorCamera, [] );
+
+	}
+
+	public touchMove( cursor: ORE.Cursor ) {
+
+	}
+
+	public touchEnd( cursor: ORE.Cursor ) {
+
+		this.eRay.touchEnd( this.getCursorPos( cursor.position ), this.editorCamera, [] );
+
+	}
+
+	private getCursorPos( p: THREE.Vector2 ) {
+
+		let rect = this.wrapperElm.getBoundingClientRect();
+
+		let nPos = p.clone();
+		nPos.x += rect.x;
+		nPos.y += rect.y;
+		nPos.x /= rect.width;
+		nPos.y /= rect.height;
+		nPos.y = 1.0 - nPos.y;
+
+		return nPos;
 
 	}
 
