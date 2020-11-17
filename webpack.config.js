@@ -36,7 +36,8 @@ module.exports = {
     resolve: {
 		extensions: [".ts", ".js"],
 		alias: {
-            "@OrayTracingRenderer": path.resolve(__dirname, 'src/ts/libs/OrayTracingRenderer/src')
+			"@OrayTracingRenderer": path.resolve(__dirname, 'src/ts/libs/OrayTracingRenderer/src'),
+            "@ore-three-ts": path.resolve(__dirname, 'src/ts/libs/ore-three-ts/src')
         },
     }
 };

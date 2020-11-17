@@ -1,4 +1,4 @@
-import * as ORE from 'ore-three-ts';
+import * as ORE from '@ore-three-ts';
 import * as THREE from 'three';
 import * as OrayTracingRenderer from '@OrayTracingRenderer';
 import { SimpleDropzone } from 'simple-dropzone';
@@ -95,7 +95,7 @@ export class MainScene extends ORE.BaseScene {
 	public resizeRenderer() {
 
 		let size = new THREE.Vector2( window.innerWidth, window.innerHeight );
-		let previewSize = size.clone().multiplyScalar( 0.4 );
+		let previewSize = size.clone().multiplyScalar( 0.3 );
 
 		this.orayRenderer.resize( size );
 		this.preOrayRenderer.resize( previewSize );
@@ -118,6 +118,8 @@ export class MainScene extends ORE.BaseScene {
 	}
 
 	public onTouchStart( cursor: ORE.Cursor, e: MouseEvent ) {
+
+
 
 		this.editorScene.touchStart( cursor );
 
@@ -142,8 +144,8 @@ export class MainScene extends ORE.BaseScene {
 			document.querySelector( '.file-input' )
 		);
 
-		// document.body.setAttribute( 'data-loaded', 'true' );
-		// this.load( './assets/webgl-path-tracing.glb' );
+		document.body.setAttribute( 'data-loaded', 'true' );
+		this.load( './assets/webgl-path-tracing.glb' );
 
 		this.simpleDropZone.on( 'drop', ( { files } ) => {
 

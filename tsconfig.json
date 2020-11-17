@@ -15,6 +15,9 @@
 	"paths": {
 		"@OrayTracingRenderer": [
 			"src/ts/libs/OrayTracingRenderer/src"
+		],
+		"@ore-three-ts": [
+			"src/ts/libs/ore-three-ts/src"
 		]
 	}
   },

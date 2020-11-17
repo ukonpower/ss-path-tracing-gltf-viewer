@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import * as ORE from 'ore-three-ts';
+import * as ORE from '@ore-three-ts';
 
 import viewerVert from './shaders/viewer.vs';
 import viewerFrag from './shaders/viewer.fs';
