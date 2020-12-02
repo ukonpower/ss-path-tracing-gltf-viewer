@@ -1,3 +1,4 @@
+
 const gulp = require( 'gulp' );
 const gulpIf = require( 'gulp-if' );
 const webpackStream = require( 'webpack-stream' );
@@ -17,7 +18,7 @@ const options = minimist( process.argv.slice( 2 ), {
 	default: {
 		P: false,
 	}
-	
+
 } );
 
 function isFixed( file ) {
@@ -28,7 +29,7 @@ function isFixed( file ) {
 
 function lint( cb ) {
 
-	let paths = [ './src/', './examples/' ];
+	let paths = [ './src/' ];
 
 	for ( let i = 0; i < paths.length; i ++ ) {
 
@@ -44,45 +45,34 @@ function lint( cb ) {
 
 }
 
-function buildWebpack( cb ){
+function buildWebpack() {
 
 	let conf = webpackConfig;
-	conf.entry.main = './src/ts/main.ts';
+	conf.entry.main = './src/views/index.tsx';
 	conf.output.filename = 'script.js';
 
-	if( options.P ){
+	if ( options.P ) {
 
 		conf.mode = 'production';
 
 	}
 
-	webpackStream( conf, webpack ).on( 'error', function ( e ) {
-			this.emit( 'end' );
-		} )
-		.pipe( gulp.dest( "./public/js/" ) )
-		.on( 'end', cb );
-		
+	return webpackStream( conf, webpack ).on( 'error', function ( e ) {
+
+		this.emit( 'end' );
+
+	} )
+		.pipe( gulp.dest( "./public/js/" ) );
+
 }
 
-function buildSass() {
-	
-	return gulp.src( "./src/scss/style.scss" )
-		.pipe( plumber() )
-		.pipe( sass() )
-		.pipe( autoprefixer([ 'last 2 versions'] ) )
-		.pipe( cssmin() )
-		.pipe( gulp.dest( "./public/css/" ) )
-		.pipe( browserSync.stream() );
-		
-}
+function copy( c ) {
 
-function copy( c ){
-	
-	gulp.src( ['./src/html/**/*'] ).pipe( gulp.dest( './public/' ) );
-	gulp.src( ['./src/assets/**/*'] ).pipe( gulp.dest( './public/assets/' ) );
+	gulp.src( [ './src/html/**/*' ] ).pipe( gulp.dest( './public/' ) );
+	gulp.src( [ './src/assets/**/*' ] ).pipe( gulp.dest( './public/assets/' ) );
 
 	c();
-	
+
 }
 
 function brSync() {
@@ -92,21 +82,30 @@ function brSync() {
 			baseDir: "public",
 			index: "index.html"
 		},
-		ghostMode: false,
+		open: true,
 		notify: false,
-		open: true
+		ghostMode: false,
 	} );
 
 }
 
-function clean( c ){
+function brSyncReload( cb ) {
 
-	del( 
+	browserSync.reload();
+
+	cb();
+
+}
+
+
+function clean( c ) {
+
+	del(
 		[ './public/' ],
 		{
 			force: true,
-		} 
-	).then( (paths) => {
+		}
+	).then( ( paths ) => {
 
 		c();
 
@@ -114,34 +113,19 @@ function clean( c ){
 
 }
 
-function reload( cb ) {
+function watch() {
 
-	browserSync.reload();
+	gulp.watch( './src/views/**/*', gulp.series( buildWebpack, brSyncReload ) );
+	gulp.watch( './src/html/**/*', gulp.series( copy, brSyncReload ) );
+	gulp.watch( './src/assets/**/*', gulp.series( copy, brSyncReload ) );
 
-	cb();
-	
 }
 
-function watch(){
-
-	gulp.watch( './src/ts/**/*', gulp.series( buildWebpack, reload ) );
-	gulp.watch( './src/scss/**/*.scss', gulp.series( buildSass ) );
-	gulp.watch( './src/html/**/*', gulp.series( copy, reload  ) );
-	gulp.watch( './src/assets/**/*', gulp.series( copy, reload  ) );
-	
-}
-
-exports.default = gulp.series( 
+exports.default = gulp.series(
 	clean,
-	gulp.parallel( buildWebpack, buildSass ),
+	gulp.parallel( buildWebpack ),
 	copy,
 	gulp.parallel( brSync, watch )
-);
-
-exports.build = gulp.series( 
-	clean,
-	gulp.parallel( buildWebpack, buildSass ),
-	copy,
 );
 
 exports.lint = gulp.task( lint );

@@ -1,0 +1,16 @@
+.controlPanel {
+	position: relative;
+	width: $panelSize;
+	height: 100%;
+	background-color: #111;
+	overflow-y: scroll;
+
+	color: #888;
+	font-weight: bold;
+	
+	&-inner{
+		position: relative;
+		padding: 10px;
+	}
+	
+}

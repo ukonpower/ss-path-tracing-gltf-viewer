@@ -1,25 +1,29 @@
 {
   "compilerOptions": {
-    "sourceMap": true,
-    "target": "es6",
-    "module": "es2015",
-    "moduleResolution": "node",
-    "lib": [
-      "es2017",
-      "dom"
-    ],
+	"sourceMap": true,
+    "target": "es5",
+	"module": "es2015",
+	"jsx": "react",
+	"moduleResolution": "node",
+	"allowSyntheticDefaultImports": true,
+	"lib": [
+		"es2020",
+		"dom"
+	],
     "typeRoots": ["node_modules/@types"],
-    "rootDir": "./src/ts",
-	"outDir": "./public",
-	"baseUrl": ".",
+    "rootDir": "./src",
+	"baseUrl": "./src",
 	"paths": {
 		"@OrayTracingRenderer": [
-			"src/ts/libs/OrayTracingRenderer/src"
+			"libs/OrayTracingRenderer/src"
 		],
 		"@ore-three-ts": [
-			"src/ts/libs/ore-three-ts/src"
+			"libs/ore-three-ts/src"
+		],
+		"@store": [
+			"views/store.tsx"
 		]
 	}
   },
-  "include": ["./src/"]
-}
+  "include": ["./"]
+} 
