@@ -1,0 +1,33 @@
+.inputItem {
+	pointer-events: auto;
+	width: 100%;
+	&-label {
+		font-size: 18px;
+		color: #ccc;
+		margin-bottom: 5px;
+	}
+
+	&-value[type="range"] { 
+		margin: auto;
+		-webkit-appearance: none;
+		position: relative;
+		overflow: hidden;
+		height: 15px;
+		width: 100%;
+		cursor: pointer;
+		border-radius: 0; /* iOS */
+	}
+	
+	&-value::-webkit-slider-runnable-track {
+		background: #ddd;
+	}
+	
+	&-value::-webkit-slider-thumb {
+		-webkit-appearance: none;
+		width: 20px; /* 1 */
+		height: 40px;
+		background: #fff;
+		box-shadow: -100vw 0 0 100vw #05B;
+		border: 2px solid #999; /* 1 */
+	}
+}

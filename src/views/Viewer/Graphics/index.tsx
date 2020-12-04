@@ -16,7 +16,7 @@ export function Graphics() {
 	const [ controller, setController ] = useState<ORE.Controller>( null );
 	const [ mainScene, setMainScene ] = useState<MainScene>( null );
 
-	const effectType = useSelector( ( state: State ) => state.app.effectType );
+	const dofIntensity = useSelector( ( state: State ) => state.app.dofIntensity );
 
 	useEffect( () => {
 
@@ -38,9 +38,13 @@ export function Graphics() {
 
 	useEffect( () => {
 
-		mainScene && mainScene.gManager.stateWatcher.updateState( 'effectType', effectType );
+		if( mainScene ) {
 
-	}, [ effectType ] );
+			mainScene.stateWatcher.updateState( 'dofIntensity', dofIntensity )
+
+		}
+		
+	}, [ mainScene, dofIntensity ] );
 
 	return (
 		<div className={ styles["canvas-wrapper"] } ref={canvasWrapperRef}>

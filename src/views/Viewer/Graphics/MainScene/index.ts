@@ -6,7 +6,11 @@ import { SimpleDropzone } from 'simple-dropzone';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 import { EditorScene } from './EditorScene';
 
+import { StateWatcher } from './StateWatcher';
+
 export class MainScene extends ORE.BaseLayer {
+
+	public stateWatcher: StateWatcher;
 
 	private orayRenderer: OrayTracingRenderer.Renderer;
 	private preOrayRenderer: OrayTracingRenderer.Renderer;
@@ -30,12 +34,28 @@ export class MainScene extends ORE.BaseLayer {
 
 		super.onBind( info );
 
-		this.orayRenderer = new OrayTracingRenderer.Renderer( this.renderer, new THREE.Vector2( 1, 1 ) );
-		this.preOrayRenderer = new OrayTracingRenderer.Renderer( this.renderer, new THREE.Vector2( 1, 1 ) );
+		this.stateWatcher = new StateWatcher();
 
+		this.initRenderer();
 		this.initScene();
 		this.initDropZone();
 		this.resizeRenderer();
+
+	}
+
+	private initRenderer() {
+
+		this.orayRenderer = new OrayTracingRenderer.Renderer( this.renderer, new THREE.Vector2( 1, 1 ) );
+		this.preOrayRenderer = new OrayTracingRenderer.Renderer( this.renderer, new THREE.Vector2( 1, 1 ) );
+
+		this.preOrayRenderer.focalDistance = 5.0;
+
+		window.stateWatcher.addEventListener( 'dofIntensity', ( e ) => {
+
+			this.orayRenderer.dofBlurRadius = e.state;
+			this.preOrayRenderer.dofBlurRadius = e.state;
+
+		} );
 
 	}
 

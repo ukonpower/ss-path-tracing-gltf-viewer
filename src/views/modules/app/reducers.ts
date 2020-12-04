@@ -2,16 +2,16 @@ import { reducerWithInitialState } from 'typescript-fsa-reducers';
 import { appActions } from './actions';
 
 export interface AppState {
-	effectType: 1 | 2 | 2
+	dofIntensity: number,
 }
 
 const initialState: AppState = {
-	effectType: 1
+	dofIntensity: 1.0
 };
 
 export const appReducer = reducerWithInitialState( initialState )
-	.case( appActions.changeEffectType, ( state, effectType ) => {
+	.case( appActions.changeDofIntensity, ( state, dofIntensity ) => {
 
-		return Object.assign( {}, state, { effectType: effectType } );
+		return Object.assign( {}, state, { dofIntensity: dofIntensity } );
 
 	} );

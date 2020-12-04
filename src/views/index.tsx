@@ -8,11 +8,13 @@ import { Header } from './components/Header';
 import { Viewer } from './Viewer';
 
 import './style/global.scss';
+import { StateWatcher } from './Viewer/Graphics/MainScene/StateWatcher';
 
 declare global {
 	interface Window {
 		isSP: boolean;
 		isIE: boolean;
+		stateWatcher: StateWatcher;
 	}
 }
 

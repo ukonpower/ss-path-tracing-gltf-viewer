@@ -22,6 +22,9 @@
 		],
 		"@store": [
 			"views/store.tsx"
+		],
+		"@components": [
+			"views/components/"
 		]
 	}
   },

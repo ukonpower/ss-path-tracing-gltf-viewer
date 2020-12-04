@@ -125,12 +125,16 @@ export class Renderer extends GPUComputationController {
 	public set focalDistance( value: number ) {
 
 		this.commonUniforms.focalDistance.value = value;
+		
+		this.resetFrame();
 
 	}
 
 	public set dofBlurRadius( value: number ) {
 
 		this.commonUniforms.dofBlurRadius.value = value;
+
+		this.resetFrame();
 
 	}
 
