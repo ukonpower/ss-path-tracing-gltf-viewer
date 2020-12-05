@@ -5,20 +5,34 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import { TransformControls } from 'three/examples/jsm/controls/TransformControls';
 import { EasyRaycaster } from './EasyRaycaster';
 import { Viewer } from './Viewer';
+import { CameraTarget } from './CameraTarget';
+import { appActions } from '@modules/app';
 
 export class EditorScene extends THREE.Object3D {
 
 	private wrapperElm: HTMLElement;
-
 	private commonUniforms: ORE.Uniforms;
+
+	/*------------------------
+		Camera
+	------------------------*/
 	public editorCamera: THREE.PerspectiveCamera;
 	public renderCamera: THREE.PerspectiveCamera;
+	private cameraTarget: CameraTarget;
+
+	/*------------------------
+		Controls
+	------------------------*/
 	public orbitControls: OrbitControls;
 	public transformControls: TransformControls;
+	private eRay: EasyRaycaster;
+	private touchableObjects: THREE.Object3D[] = []
 
+	/*------------------------
+		Preview
+	------------------------*/
 	private viewer: Viewer;
 	public previewRenderTarget: THREE.WebGLRenderTarget;
-	private eRay: EasyRaycaster;
 
 	constructor( elm: HTMLElement, parentUniforms?: ORE.Uniforms ) {
 
@@ -45,22 +59,9 @@ export class EditorScene extends THREE.Object3D {
 
 	protected init() {
 
-		this.editorCamera = new THREE.PerspectiveCamera();
-		this.editorCamera.position.set( - 3, 3, 10 );
-		this.add( this.editorCamera );
-
-		this.renderCamera = new THREE.PerspectiveCamera();
-		this.renderCamera.far = 20;
-		this.renderCamera.position.set( 1, 2, 6 );
-		this.renderCamera.lookAt( 0, 0.5, 0 );
-		this.add( this.renderCamera );
-
-		let cameraHelper = new THREE.CameraHelper( this.renderCamera );
-		this.add( cameraHelper );
-
-		let glidHelper = new THREE.GridHelper( 10, 10, 0x00FF, 0x808080 );
-		this.add( glidHelper );
-
+		/*------------------------
+			Lights
+		------------------------*/
 		let light: THREE.Light;
 		light = new THREE.DirectionalLight();
 		light.intensity = 1.5;
@@ -71,20 +72,30 @@ export class EditorScene extends THREE.Object3D {
 		light.intensity = 0.5;
 		this.add( light );
 
-		this.previewRenderTarget = new THREE.WebGLRenderTarget( 1, 1 );
-		this.commonUniforms.previewTex.value = this.previewRenderTarget.texture;
-
-		this.viewer = new Viewer( this.commonUniforms );
-		this.add( this.viewer );
-
-		this.initControls();
-		this.initEray();
-
-	}
-
-	private initControls() {
+		/*------------------------
+			Editor Scene Camera
+		------------------------*/
+		this.editorCamera = new THREE.PerspectiveCamera();
+		this.editorCamera.position.set( - 3, 3, 10 );
+		this.add( this.editorCamera );
 
 		this.orbitControls = new OrbitControls( this.editorCamera, this.wrapperElm );
+
+		/*------------------------
+			Render Camra
+		------------------------*/
+		this.renderCamera = new THREE.PerspectiveCamera();
+		this.renderCamera.far = 20;
+		this.renderCamera.position.set( 1, 2, 6 );
+		this.renderCamera.lookAt( 0, 0.5, 0 );
+		this.add( this.renderCamera );
+
+		let cameraHelper = new THREE.CameraHelper( this.renderCamera );
+		this.add( cameraHelper );
+
+		/*------------------------
+			TransformControls
+		------------------------*/
 
 		this.transformControls = new TransformControls( this.editorCamera, this.wrapperElm );
 		this.add( this.transformControls );
@@ -94,12 +105,11 @@ export class EditorScene extends THREE.Object3D {
 
 			this.orbitControls.enabled = ! e.value;
 
-
 		} );
 
 		this.transformControls.addEventListener( 'change', ( e ) =>{
 
-			this.renderCamera.lookAt( 0, 0.5, 0 );
+			this.renderCamera.lookAt( this.cameraTarget.position );
 
 			this.dispatchEvent( {
 				type: 'sceneupdate'
@@ -107,10 +117,44 @@ export class EditorScene extends THREE.Object3D {
 
 		} );
 
-	}
+		/*------------------------
+			Camer Target
+		------------------------*/
 
-	private initEray() {
+		this.cameraTarget = new CameraTarget( this.transformControls, this.commonUniforms );
+		this.add( this.cameraTarget );
+		this.touchableObjects.push( this.cameraTarget );
 
+		this.cameraTarget.addEventListener( 'move', () => {
+
+			let forcalDistance = this.cameraTarget.position.distanceTo( this.renderCamera.position );
+			window.gManager.dispatch( appActions.changeFocalDistance( forcalDistance ) );
+
+		} );
+
+		this.transformControls.dispatchEvent( {
+			type: 'change'
+		} );
+
+		/*------------------------
+			Helper
+		------------------------*/
+
+		let glidHelper = new THREE.GridHelper( 10, 10, 0x00FF, 0x808080 );
+		this.add( glidHelper );
+
+		/*------------------------
+			Viewer
+		------------------------*/
+		this.viewer = new Viewer( this.commonUniforms );
+		this.add( this.viewer );
+
+		this.previewRenderTarget = new THREE.WebGLRenderTarget( 1, 1 );
+		this.commonUniforms.previewTex.value = this.previewRenderTarget.texture;
+
+		/*------------------------
+			eRay
+		------------------------*/
 		this.eRay = new EasyRaycaster();
 
 	}
@@ -123,7 +167,14 @@ export class EditorScene extends THREE.Object3D {
 
 	public touchStart( p: THREE.Vector2 ) {
 
-		this.eRay.touchStart( this.getCursorPos( p ), this.editorCamera, [] );
+		let obj = this.eRay.touchStart( p, this.editorCamera, this.touchableObjects );
+
+		if ( obj ) {
+
+			this.transformControls.detach();
+			this.transformControls.attach( obj );
+
+		}
 
 	}
 
@@ -133,22 +184,7 @@ export class EditorScene extends THREE.Object3D {
 
 	public touchEnd( p: THREE.Vector2 ) {
 
-		this.eRay.touchEnd( this.getCursorPos( p ), this.editorCamera, [] );
-
-	}
-
-	private getCursorPos( p: THREE.Vector2 ) {
-
-		let rect = this.wrapperElm.getBoundingClientRect();
-
-		let nPos = p.clone();
-		nPos.x += rect.x;
-		nPos.y += rect.y;
-		nPos.x /= rect.width;
-		nPos.y /= rect.height;
-		nPos.y = 1.0 - nPos.y;
-
-		return nPos;
+		this.eRay.touchEnd( p, this.editorCamera, [] );
 
 	}
 

@@ -6,11 +6,11 @@ import { SimpleDropzone } from 'simple-dropzone';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 import { EditorScene } from './EditorScene';
 
-import { StateWatcher } from './StateWatcher';
+import { GlobalManager } from './GlobalManager';
 
 export class MainScene extends ORE.BaseLayer {
 
-	public stateWatcher: StateWatcher;
+	public gManager: GlobalManager;
 
 	private orayRenderer: OrayTracingRenderer.Renderer;
 	private preOrayRenderer: OrayTracingRenderer.Renderer;
@@ -20,9 +20,13 @@ export class MainScene extends ORE.BaseLayer {
 
 	private simpleDropZone: any;
 
-	constructor() {
+	private dispatch: any;
+
+	constructor( dispatch: any ) {
 
 		super();
+
+		this.dispatch = dispatch;
 
 		this.commonUniforms = ORE.UniformsLib.CopyUniforms( this.commonUniforms, {
 
@@ -34,7 +38,10 @@ export class MainScene extends ORE.BaseLayer {
 
 		super.onBind( info );
 
-		this.stateWatcher = new StateWatcher();
+		this.gManager = new GlobalManager( this.dispatch, {
+			onMustAssetsLoaded: () => {
+			}
+		} );
 
 		this.initRenderer();
 		this.initScene();
@@ -50,10 +57,17 @@ export class MainScene extends ORE.BaseLayer {
 
 		this.preOrayRenderer.focalDistance = 5.0;
 
-		window.stateWatcher.addEventListener( 'dofIntensity', ( e ) => {
+		this.gManager.stateWatcher.addEventListener( 'dofIntensity', ( e ) => {
 
 			this.orayRenderer.dofBlurRadius = e.state;
 			this.preOrayRenderer.dofBlurRadius = e.state;
+
+		} );
+
+		this.gManager.stateWatcher.addEventListener( 'focalDistance', ( e ) => {
+
+			this.orayRenderer.focalDistance = e.state;
+			this.preOrayRenderer.focalDistance = e.state;
 
 		} );
 
@@ -133,19 +147,19 @@ export class MainScene extends ORE.BaseLayer {
 
 	public onTouchStart( touchEventArgs: ORE.TouchEventArgs ) {
 
-		this.editorScene.touchStart( touchEventArgs.position );
+		this.editorScene.touchStart( touchEventArgs.normalizedPosition );
 
 	}
 
 	public onTouchMove( touchEventArgs: ORE.TouchEventArgs ) {
 
-		this.editorScene.touchMove( touchEventArgs.position );
+		this.editorScene.touchMove( touchEventArgs.normalizedPosition );
 
 	}
 
 	public onTouchEnd( touchEventArgs: ORE.TouchEventArgs ) {
 
-		this.editorScene.touchEnd( touchEventArgs.position );
+		this.editorScene.touchEnd( touchEventArgs.normalizedPosition );
 
 	}
 

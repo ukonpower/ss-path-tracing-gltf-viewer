@@ -11,21 +11,24 @@
 		"dom"
 	],
     "typeRoots": ["node_modules/@types"],
-    "rootDir": "./src",
-	"baseUrl": "./src",
+    "rootDir": "./",
+	"baseUrl": "./",
 	"paths": {
 		"@OrayTracingRenderer": [
-			"libs/OrayTracingRenderer/src"
+			"src/libs/OrayTracingRenderer/src"
 		],
 		"@ore-three-ts": [
-			"libs/ore-three-ts/src"
+			"src/libs/ore-three-ts/src"
 		],
 		"@store": [
-			"views/store.tsx"
+			"src/views/store.tsx"
 		],
 		"@components": [
-			"views/components/"
-		]
+			"src/views/components/"
+		],
+		"@modules/*": [
+			"src/views/modules/*"
+		],
 	}
   },
   "include": ["./"]

@@ -1,6 +1,4 @@
 import * as THREE from 'three';
-import * as ORE from '@ore-three-ts';
-
 export declare interface TouchObjects{
 	objs: THREE.Intersection[];
 	elms: HTMLElement;
@@ -21,7 +19,7 @@ declare interface ElementInfo {
 	mouseOutHandler: any;
 }
 
-export class EasyRaycaster extends ORE.EventDispatcher {
+export class EasyRaycaster {
 
 	public enableMeshRaycaster: boolean = true;
 	public enableElementRaycaster: boolean = true;
@@ -40,9 +38,10 @@ export class EasyRaycaster extends ORE.EventDispatcher {
 	private clickEvents: ClickEventInfo[] = [];
 	private hoverEvents: HoverEventInfo[] = [];
 
-	constructor() {
+	public onChangeHitObject: ( object: THREE.Object3D | HTMLElement ) => void;
+	public onTouchObject: ( object: THREE.Object3D ) => void;
 
-		super();
+	constructor() {
 
 		this.raycaster = new THREE.Raycaster();
 
@@ -52,17 +51,28 @@ export class EasyRaycaster extends ORE.EventDispatcher {
 
 		if ( ! objects ) return null;
 
-		this.raycaster.setFromCamera( cursorPos, camera );
+		let objs = [];
 
-		let intersection = this.raycaster.intersectObjects( objects );
+		for ( let i = 0; i < objects.length; i ++ ) {
 
-		for ( let i = 0; i < intersection.length; i ++ ) {
-
-			if ( intersection[ i ].object.visible ) return intersection[ i ];
+			const element = objects[ i ];
+			objs.push( element );
 
 		}
 
-		return { object: null };
+		let m = new THREE.Vector2( cursorPos.x, cursorPos.y );
+
+		this.raycaster.setFromCamera( m, camera );
+
+		let intersection = this.raycaster.intersectObjects( objs );
+
+		for ( let i = 0; i < intersection.length; i ++ ) {
+
+			if ( intersection[ i ].object.visible ) return intersection[ i ].object;
+
+		}
+
+		return null;
 
 	}
 
@@ -70,7 +80,7 @@ export class EasyRaycaster extends ORE.EventDispatcher {
 
 		if ( ! this.enableMeshRaycaster ) return null;
 
-		let hitObj = this.getHitObject( cursorPos, camera, objects ).object;
+		let hitObj = this.getHitObject( cursorPos, camera, objects );
 
 		if ( hitObj ) {
 
@@ -88,10 +98,11 @@ export class EasyRaycaster extends ORE.EventDispatcher {
 
 				}
 
-				this.dispatchEvent( {
-					type: 'onchangehitobject',
-					obj: hitObj
-				} );
+				if ( this.onChangeHitObject ) {
+
+					this.onChangeHitObject( hitObj );
+
+				}
 
 			}
 
@@ -115,10 +126,11 @@ export class EasyRaycaster extends ORE.EventDispatcher {
 
 				}
 
-				this.dispatchEvent( {
-					type: 'onchangehitobject',
-					obj: null
-				} );
+				if ( this.onChangeHitObject ) {
+
+					this.onChangeHitObject( null );
+
+				}
 
 			}
 
@@ -130,7 +142,21 @@ export class EasyRaycaster extends ORE.EventDispatcher {
 
 	}
 
-	public addElements( ...elements: any ) {
+	public addElements( elements: NodeListOf<Element> )
+
+	public addElements( elements: HTMLElement[] )
+
+	public addElements( elements: HTMLElement )
+
+	public addElements( elements: any ) {
+
+		if ( ! elements ) return;
+
+		if ( elements.length === undefined ) {
+
+			elements = [ elements ];
+
+		}
 
 		for ( let i = 0; i < elements.length; i ++ ) {
 
@@ -200,12 +226,10 @@ export class EasyRaycaster extends ORE.EventDispatcher {
 
 		if ( ! this.enableMeshRaycaster ) return null;
 
-		this.holdObj = this.getHitObject( normalizePos, camera, objects ).object;
+		this.holdObj = this.getHitObject( normalizePos, camera, objects );
 
 		this.touchStartPos.copy( normalizePos );
 		this.touchStartTime = new Date();
-
-		return this.holdObj;
 
 	}
 
@@ -215,7 +239,7 @@ export class EasyRaycaster extends ORE.EventDispatcher {
 
 		if ( this.holdObj ) {
 
-			let object = this.getHitObject( normalizePos, camera, objects ).object;
+			let object = this.getHitObject( normalizePos, camera, objects );
 
 			if ( object && object.name == this.holdObj.name ) {
 
@@ -223,10 +247,11 @@ export class EasyRaycaster extends ORE.EventDispatcher {
 
 				if ( normalizePos.clone().sub( this.touchStartPos ).length() > 0.1 ) return;
 
-				this.dispatchEvent( {
-					type: 'ontouchobject',
-					obj: object
-				} );
+				if ( this.onTouchObject ) {
+
+					this.onTouchObject( this.holdObj );
+
+				}
 
 				for ( let i = 0; i < this.clickEvents.length; i ++ ) {
 
@@ -266,10 +291,11 @@ export class EasyRaycaster extends ORE.EventDispatcher {
 
 		}
 
-		this.dispatchEvent( {
-			type: 'onchangehitobject',
-			obj: this.hoverElm
-		} );
+		if ( this.onChangeHitObject ) {
+
+			this.onChangeHitObject( this.hoverElm );
+
+		}
 
 	}
 
@@ -289,10 +315,12 @@ export class EasyRaycaster extends ORE.EventDispatcher {
 
 		}
 
-		this.dispatchEvent( {
-			type: 'onchangehitobject',
-			obj: null
-		} );
+
+		if ( this.onChangeHitObject ) {
+
+			this.onChangeHitObject( null );
+
+		}
 
 		this.hoverElm = null;
 

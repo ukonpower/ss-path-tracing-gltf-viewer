@@ -39,6 +39,7 @@ export function InputItem( props: inputItemProps ) {
 	},[inputElmRef])
 	
 	let inputElm;
+	
 	if( props.type == 'slider') {
 		inputElm = <input ref={inputElmRef} className={style['inputItem-value']} type="range" min={props.min} max={props.max} defaultValue={props.value} step="0.001"></input>
 	} else {

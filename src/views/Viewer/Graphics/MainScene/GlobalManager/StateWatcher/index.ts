@@ -6,8 +6,6 @@ export class StateWatcher extends ORE.EventDispatcher {
 
 		super();
 
-		window.stateWatcher = this;
-
 	}
 
 	public updateState( stateType: string, state: any ) {

@@ -64,7 +64,8 @@ module.exports = {
 			"@OrayTracingRenderer": path.resolve( __dirname, 'src/libs/OrayTracingRenderer/src' ),
 			"@ore-three-ts": path.resolve( __dirname, 'src/libs/ore-three-ts/src' ),
 			"@store": path.resolve( __dirname, 'src/views/store.tsx' ),
-			"@components": path.resolve( __dirname, 'src/views/components/' )
+			"@components": path.resolve( __dirname, 'src/views/components/' ),
+			"@modules": path.resolve( __dirname, 'src/views/modules/' )
 		},
 	}
 };
