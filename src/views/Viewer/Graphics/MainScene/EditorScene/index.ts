@@ -5,6 +5,7 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import { TransformControls } from 'three/examples/jsm/controls/TransformControls';
 import { EasyRaycaster } from './EasyRaycaster';
 import { Viewer } from './Viewer';
+import { RenderCamera } from './RenderCamera';
 import { CameraTarget } from './CameraTarget';
 import { appActions } from '@modules/app';
 
@@ -17,7 +18,7 @@ export class EditorScene extends THREE.Object3D {
 		Camera
 	------------------------*/
 	public editorCamera: THREE.PerspectiveCamera;
-	public renderCamera: THREE.PerspectiveCamera;
+	public renderCamera: RenderCamera;
 	private cameraTarget: CameraTarget;
 
 	/*------------------------
@@ -84,11 +85,11 @@ export class EditorScene extends THREE.Object3D {
 		/*------------------------
 			Render Camra
 		------------------------*/
-		this.renderCamera = new THREE.PerspectiveCamera();
+		this.renderCamera = new RenderCamera( this.commonUniforms );
 		this.renderCamera.far = 20;
 		this.renderCamera.position.set( 1, 2, 6 );
-		this.renderCamera.lookAt( 0, 0.5, 0 );
 		this.add( this.renderCamera );
+		this.touchableObjects.push( this.renderCamera.clickTarget );
 
 		let cameraHelper = new THREE.CameraHelper( this.renderCamera );
 		this.add( cameraHelper );
@@ -96,7 +97,6 @@ export class EditorScene extends THREE.Object3D {
 		/*------------------------
 			TransformControls
 		------------------------*/
-
 		this.transformControls = new TransformControls( this.editorCamera, this.wrapperElm );
 		this.add( this.transformControls );
 
@@ -109,8 +109,6 @@ export class EditorScene extends THREE.Object3D {
 
 		this.transformControls.addEventListener( 'change', ( e ) =>{
 
-			this.renderCamera.lookAt( this.cameraTarget.position );
-
 			this.dispatchEvent( {
 				type: 'sceneupdate'
 			} );
@@ -122,6 +120,7 @@ export class EditorScene extends THREE.Object3D {
 		------------------------*/
 
 		this.cameraTarget = new CameraTarget( this.transformControls, this.commonUniforms );
+		this.cameraTarget.position.set( 0.3, 1, 2 );
 		this.add( this.cameraTarget );
 		this.touchableObjects.push( this.cameraTarget );
 
@@ -129,6 +128,18 @@ export class EditorScene extends THREE.Object3D {
 
 			let forcalDistance = this.cameraTarget.position.distanceTo( this.renderCamera.position );
 			window.gManager.dispatch( appActions.changeFocalDistance( forcalDistance ) );
+
+		} );
+
+		this.transformControls.addEventListener( 'change', ( e ) =>{
+
+			let objName = this.transformControls.object ? this.transformControls.object.name : '';
+
+			if ( objName.match( /CameraTarget|RenderCamera/ ) ) {
+
+				this.renderCamera.lookAt( this.cameraTarget.position );
+
+			}
 
 		} );
 
@@ -171,8 +182,18 @@ export class EditorScene extends THREE.Object3D {
 
 		if ( obj ) {
 
-			this.transformControls.detach();
-			this.transformControls.attach( obj );
+			if ( obj.userData.onClick ) {
+
+				obj = obj.userData.onClick();
+
+			}
+
+			if ( obj != this.transformControls.object ) {
+
+				this.transformControls.detach();
+				this.transformControls.attach( obj );
+
+			}
 
 		}
 
