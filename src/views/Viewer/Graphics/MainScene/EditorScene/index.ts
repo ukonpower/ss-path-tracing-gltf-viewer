@@ -20,6 +20,7 @@ export class EditorScene extends THREE.Object3D {
 	public editorCamera: THREE.PerspectiveCamera;
 	public renderCamera: RenderCamera;
 	private cameraTarget: CameraTarget;
+	private cameraHelper: THREE.CameraHelper;
 
 	/*------------------------
 		Controls
@@ -91,8 +92,8 @@ export class EditorScene extends THREE.Object3D {
 		this.add( this.renderCamera );
 		this.touchableObjects.push( this.renderCamera.clickTarget );
 
-		let cameraHelper = new THREE.CameraHelper( this.renderCamera );
-		this.add( cameraHelper );
+		this.cameraHelper = new THREE.CameraHelper( this.renderCamera );
+		this.add( this.cameraHelper );
 
 		/*------------------------
 			TransformControls
@@ -143,6 +144,13 @@ export class EditorScene extends THREE.Object3D {
 			type: 'change'
 		} );
 
+		window.gManager.stateWatcher.addEventListener( 'fov', ( e ) => {
+
+			this.renderCamera.fov = e.state;
+			this.renderCamera.updateProjectionMatrix();
+
+		} );
+
 		/*------------------------
 			Helper
 		------------------------*/
@@ -169,6 +177,7 @@ export class EditorScene extends THREE.Object3D {
 	public update() {
 
 		this.orbitControls.update();
+		this.cameraHelper.update();
 
 	}
 

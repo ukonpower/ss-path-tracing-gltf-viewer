@@ -14,6 +14,7 @@ import { ParamGroup } from './ParamGroup';
 export function ControlPanel() {
 	
 	const pathTracingParam = useSelector( ( state: State ) => state.app.pathTracingParam );
+	const cameraParam = useSelector( ( state: State ) => state.app.cameraParam );
 
 	return (
 		<div className={style["controlPanel"]}>
@@ -24,7 +25,8 @@ export function ControlPanel() {
 					<InputItem name="Ray Distance" type="slider" min={0} max={3} value={pathTracingParam.rayDistance} actions={ {action: appActions.updatePathTracingState, selector: 'rayDistance' } } ></InputItem>
 				</ParamGroup>
 				<ParamGroup label="Camera">
-					<InputItem name="DoF" type="slider" min={0} max={1} value={pathTracingParam.dofIntensity} actions={ {action: appActions.updatePathTracingState, selector: 'dofIntensity' }} ></InputItem>
+					<InputItem name="FOV" type="slider" min={0} max={100} value={cameraParam.fov} actions={ {action: appActions.updateCameraState, selector: 'fov' }} ></InputItem>
+					<InputItem name="DoF" type="slider" min={0} max={1} value={cameraParam.dofIntensity} actions={ {action: appActions.updateCameraState, selector: 'dofIntensity' }} ></InputItem>
 				</ParamGroup>
 
 			</div>

@@ -18,7 +18,7 @@ declare interface ParamGroupProps{
 export function ParamGroup( props: ParamGroupProps) {
 
 	return (
-	<div className={style['paramGroup']}>
+	<div className={style['paramGroup']} data-active={props.active}>
 		<div className={style['paramGroup-label']}>{props.label}</div>
 		<div className={style['paramGroup-items']}>{props.children}</div>
 	</div>

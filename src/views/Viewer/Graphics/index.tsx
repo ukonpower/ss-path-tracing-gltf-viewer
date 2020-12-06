@@ -18,6 +18,7 @@ export function Graphics() {
 	const [ mainScene, setMainScene ] = useState<MainScene>( null );
 
 	const pathTracingParam = useSelector( ( state: State ) => state.app.pathTracingParam );
+	const cameraParam = useSelector( ( state: State ) => state.app.cameraParam );
 
 	const dispatch = useDispatch();
 
@@ -51,11 +52,26 @@ export function Graphics() {
 				
 			}
 
-			console.warn( 'aaa');
-
 		}
 		
 	}, [ mainScene, pathTracingParam ] );
+
+	
+	useEffect( () => {
+
+		if( mainScene ) {
+
+			let keys = Object.keys( cameraParam );
+		
+			for (let i = 0; i < keys.length; i++) {
+
+				mainScene.gManager.stateWatcher.updateState( keys[i], cameraParam[keys[i]] );
+				
+			}
+
+		}
+		
+	}, [ mainScene, cameraParam ] );
 
 	return (
 		<div className={ styles["canvas-wrapper"] } ref={canvasWrapperRef}>
