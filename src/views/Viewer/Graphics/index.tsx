@@ -17,11 +17,7 @@ export function Graphics() {
 	const [ controller, setController ] = useState<ORE.Controller>( null );
 	const [ mainScene, setMainScene ] = useState<MainScene>( null );
 
-	const dofIntensity = useSelector( ( state: State ) => state.app.dofIntensity );
-	const focalDistance = useSelector( ( state: State ) => state.app.focalDistance );
-	const maxBounce = useSelector( ( state: State ) => state.app.maxBounce );
-	const maxStep = useSelector( ( state: State ) => state.app.maxStep );
-	const rayDistance = useSelector( ( state: State ) => state.app.rayDistance );
+	const pathTracingParam = useSelector( ( state: State ) => state.app.pathTracingParam );
 
 	const dispatch = useDispatch();
 
@@ -47,15 +43,19 @@ export function Graphics() {
 
 		if( mainScene ) {
 
-			mainScene.gManager.stateWatcher.updateState( 'dofIntensity', dofIntensity );
-			mainScene.gManager.stateWatcher.updateState( 'focalDistance', focalDistance );
-			mainScene.gManager.stateWatcher.updateState( 'maxBounce', maxBounce );
-			mainScene.gManager.stateWatcher.updateState( 'maxStep', maxStep );
-			mainScene.gManager.stateWatcher.updateState( 'rayDistance', rayDistance );
+			let keys = Object.keys( pathTracingParam );
+		
+			for (let i = 0; i < keys.length; i++) {
+
+				mainScene.gManager.stateWatcher.updateState( keys[i], pathTracingParam[keys[i]] );
+				
+			}
+
+			console.warn( 'aaa');
 
 		}
 		
-	}, [ mainScene, dofIntensity, focalDistance, maxBounce, maxStep, rayDistance ] );
+	}, [ mainScene, pathTracingParam ] );
 
 	return (
 		<div className={ styles["canvas-wrapper"] } ref={canvasWrapperRef}>

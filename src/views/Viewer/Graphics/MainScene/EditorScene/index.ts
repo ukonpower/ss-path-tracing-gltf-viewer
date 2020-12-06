@@ -133,7 +133,7 @@ export class EditorScene extends THREE.Object3D {
 				this.renderCamera.lookAt( this.cameraTarget.position );
 
 				let forcalDistance = this.cameraTarget.position.distanceTo( this.renderCamera.position );
-				window.gManager.dispatch( appActions.changeFocalDistance( forcalDistance ) );
+				window.gManager.dispatch( appActions.updatePathTracingState( { selector: 'focalDistance', value: forcalDistance } ) );
 
 			}
 

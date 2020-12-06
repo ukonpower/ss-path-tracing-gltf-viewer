@@ -13,21 +13,18 @@ import { ParamGroup } from './ParamGroup';
 
 export function ControlPanel() {
 	
-	const dofIntensity = useSelector( ( state: State ) => state.app.dofIntensity );
-	const focalDistance = useSelector( ( state: State ) => state.app.focalDistance );
-	const maxBounce = useSelector( ( state: State ) => state.app.maxBounce );
-	const maxStep = useSelector( ( state: State ) => state.app.maxStep );
-	const rayDistance = useSelector( ( state: State ) => state.app.rayDistance );
-
+	const pathTracingParam = useSelector( ( state: State ) => state.app.pathTracingParam );
 
 	return (
 		<div className={style["controlPanel"]}>
 			<div className={style["controlPanel-inner"]}>
 				<ParamGroup label="Path Tracing">
-					<InputItem name="DoF" type="slider" min={0} max={1} value={dofIntensity} action={appActions.changeDofIntensity} ></InputItem>
-					<InputItem name="Max Bounce" type="slider" min={0} max={15} value={maxBounce} step={1} action={appActions.changeMaxBounce} ></InputItem>
-					<InputItem name="Max Step" type="slider" min={0} max={100} value={maxStep} step={1} action={appActions.changeMaxStep} ></InputItem>
-					<InputItem name="Ray Distance" type="slider" min={0} max={3} value={rayDistance} action={appActions.changeRayDistance} ></InputItem>
+					<InputItem name="Max Bounce" type="slider" min={0} max={15} value={pathTracingParam.maxBounce} step={1} actions={ {action: appActions.updatePathTracingState, selector: 'maxBounce' } } ></InputItem>
+					<InputItem name="Max Step" type="slider" min={0} max={100} value={pathTracingParam.maxStep} step={1} actions={ {action: appActions.updatePathTracingState, selector: 'maxStep' } } ></InputItem>
+					<InputItem name="Ray Distance" type="slider" min={0} max={3} value={pathTracingParam.rayDistance} actions={ {action: appActions.updatePathTracingState, selector: 'rayDistance' } } ></InputItem>
+				</ParamGroup>
+				<ParamGroup label="Camera">
+					<InputItem name="DoF" type="slider" min={0} max={1} value={pathTracingParam.dofIntensity} actions={ {action: appActions.updatePathTracingState, selector: 'dofIntensity' }} ></InputItem>
 				</ParamGroup>
 
 			</div>

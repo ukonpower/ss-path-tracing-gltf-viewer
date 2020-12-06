@@ -10,8 +10,9 @@ import { useSelector } from 'react-redux';
 import { appActions } from '../../modules/app';
 
 declare interface ParamGroupProps{
-	children: JSX.Element[],
-	label: string
+	children: JSX.Element[] | JSX.Element,
+	label: string,
+	active?: boolean,
 }
 
 export function ParamGroup( props: ParamGroupProps) {

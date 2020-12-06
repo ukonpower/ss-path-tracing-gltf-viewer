@@ -2,44 +2,32 @@ import { reducerWithInitialState } from 'typescript-fsa-reducers';
 import { appActions } from './actions';
 
 export interface AppState {
-	dofIntensity: number,
-	focalDistance: number,
-	rayDistance: number,
-	maxStep: number,
-	maxBounce: number,
+	pathTracingParam: {
+		dofIntensity: number,
+		focalDistance: number,
+		rayDistance: number,
+		maxStep: number,
+		maxBounce: number,
+	}
 }
 
 const initialState: AppState = {
-	dofIntensity: 0.1,
-	focalDistance: 0.0,
-	rayDistance: 1.0,
-	maxStep: 50,
-	maxBounce: 5
+	pathTracingParam: {
+		dofIntensity: 0.1,
+		focalDistance: 0.0,
+		rayDistance: 1.0,
+		maxStep: 50,
+		maxBounce: 5
+	}
 };
 
 export const appReducer = reducerWithInitialState( initialState )
-	.case( appActions.changeDofIntensity, ( state, dofIntensity ) => {
+	.case( appActions.updatePathTracingState, ( state, param ) => {
 
-		return Object.assign( {}, state, { dofIntensity: dofIntensity } );
+		let newState = Object.assign( {}, state );
+		newState.pathTracingParam = Object.assign( {}, newState.pathTracingParam );
+		newState.pathTracingParam[ param.selector ] = param.value;
 
-	} )
-	.case( appActions.changeFocalDistance, ( state, focalDistance ) => {
-
-		return Object.assign( {}, state, { focalDistance: focalDistance } );
-
-	} )
-	.case( appActions.changeRayDistance, ( state, rayDistance ) => {
-
-		return Object.assign( {}, state, { rayDistance: rayDistance } );
-
-	} )
-	.case( appActions.changeMaxStep, ( state, maxStep ) => {
-
-		return Object.assign( {}, state, { maxStep: maxStep } );
-
-	} )
-	.case( appActions.changeMaxBounce, ( state, maxBounce ) => {
-
-		return Object.assign( {}, state, { maxBounce: maxBounce } );
+		return newState;
 
 	} );

@@ -10,7 +10,7 @@ import style from './style.scss';
 declare interface inputItemProps {
 	name: string;
 	type: 'slider'|'toggle'
-	action: ActionCreator<number>;
+	actions: { selector: string, action: ActionCreator<any> };
 	min?: number;
 	max?: number;
 	value?: number;
@@ -31,7 +31,7 @@ export function InputItem( props: inputItemProps ) {
 
 				let target = e.target as HTMLInputElement;
 					
-				dispatch( props.action( Number( target.value ) ) );
+				dispatch( props.actions.action({ selector: props.actions.selector, value: target.value }) );
 
 			} );
 			
@@ -53,8 +53,6 @@ export function InputItem( props: inputItemProps ) {
 			<input ref={inputElmRef} className={style['inputItem-value']} type="range" min={props.min} max={props.max} defaultValue={props.value}></input>
 		</div>
 	}
-
-	dispatch( props.action( props.value ) );
 
 	return (
 		<div className={style['inputItem']}>
