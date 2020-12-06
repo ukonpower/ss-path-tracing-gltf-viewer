@@ -2,12 +2,34 @@
 	pointer-events: auto;
 	width: 100%;
 	margin-bottom: 10px;
+	
 	&-label {
 		font-size: 14px;
 		color: #AAA;
 		margin-bottom: 2px;
 	}
 
+	&-value{
+
+		&-wrapper{
+			display: flex;
+			justify-content: space-between;
+		}
+
+		&-viewer {
+			overflow: hidden;
+			position: relative;
+			width: 20%;
+			margin-left: 5px;
+			padding: 0px 5px;
+			border-radius: 2px 2px;
+			// background-color: #090909;
+			font-size: 13px;
+			color: #666;
+		}
+
+	}
+	
 	&-value[type="range"] { 
 		margin: auto;
 		-webkit-appearance: none;

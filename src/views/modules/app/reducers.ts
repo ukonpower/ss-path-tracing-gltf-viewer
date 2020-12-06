@@ -10,7 +10,7 @@ export interface AppState {
 }
 
 const initialState: AppState = {
-	dofIntensity: 1.0,
+	dofIntensity: 0.1,
 	focalDistance: 0.0,
 	rayDistance: 1.0,
 	maxStep: 50,

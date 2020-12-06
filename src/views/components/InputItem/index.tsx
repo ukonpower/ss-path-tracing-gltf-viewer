@@ -39,12 +39,19 @@ export function InputItem( props: inputItemProps ) {
 		
 	},[inputElmRef])
 	
-	let inputElm;
+	let inputElm: JSX.Element;
 	
 	if( props.type == 'slider') {
-		inputElm = <input ref={inputElmRef} className={style['inputItem-value']} type="range" min={props.min} max={props.max} defaultValue={props.value} step={props.step || 0.01}></input>
+		inputElm = 
+		<div className={style['inputItem-value-wrapper']}>
+			<input ref={inputElmRef} className={style['inputItem-value']} type="range" min={props.min} max={props.max} defaultValue={props.value} step={props.step || 0.00001}></input>
+			<div className={style['inputItem-value-viewer']} >{props.value}</div>
+		</div>
 	} else {
-		inputElm = <input ref={inputElmRef} className={style['inputItem-value']} type="toggle"></input>
+		inputElm= 
+		<div className={style['inputItem-value-wrapper']}>
+			<input ref={inputElmRef} className={style['inputItem-value']} type="range" min={props.min} max={props.max} defaultValue={props.value}></input>
+		</div>
 	}
 
 	dispatch( props.action( props.value ) );
