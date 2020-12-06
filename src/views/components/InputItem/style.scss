@@ -1,10 +1,11 @@
 .inputItem {
 	pointer-events: auto;
 	width: 100%;
+	margin-bottom: 10px;
 	&-label {
-		font-size: 18px;
-		color: #ccc;
-		margin-bottom: 5px;
+		font-size: 14px;
+		color: #AAA;
+		margin-bottom: 2px;
 	}
 
 	&-value[type="range"] { 
@@ -12,7 +13,7 @@
 		-webkit-appearance: none;
 		position: relative;
 		overflow: hidden;
-		height: 15px;
+		height: 12px;
 		width: 100%;
 		cursor: pointer;
 		border-radius: 0; /* iOS */
@@ -24,10 +25,10 @@
 	
 	&-value::-webkit-slider-thumb {
 		-webkit-appearance: none;
-		width: 20px; /* 1 */
+		width: 15px;
 		height: 40px;
 		background: #fff;
-		box-shadow: -100vw 0 0 100vw #05B;
+		box-shadow: -100vw 0 0 100vw rgb(28, 126, 255);
 		border: 2px solid #999; /* 1 */
 	}
 }

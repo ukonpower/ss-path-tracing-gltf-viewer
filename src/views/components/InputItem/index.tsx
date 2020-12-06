@@ -14,6 +14,7 @@ declare interface inputItemProps {
 	min?: number;
 	max?: number;
 	value?: number;
+	step?: number;
 	onInput?: ((e:Event)=>void)
 }
 
@@ -41,7 +42,7 @@ export function InputItem( props: inputItemProps ) {
 	let inputElm;
 	
 	if( props.type == 'slider') {
-		inputElm = <input ref={inputElmRef} className={style['inputItem-value']} type="range" min={props.min} max={props.max} defaultValue={props.value} step="0.001"></input>
+		inputElm = <input ref={inputElmRef} className={style['inputItem-value']} type="range" min={props.min} max={props.max} defaultValue={props.value} step={props.step || 0.01}></input>
 	} else {
 		inputElm = <input ref={inputElmRef} className={style['inputItem-value']} type="toggle"></input>
 	}

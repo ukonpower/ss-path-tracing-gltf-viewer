@@ -115,7 +115,7 @@ function clean( c ) {
 
 function watch() {
 
-	gulp.watch( './src/views/**/*', gulp.series( buildWebpack, brSyncReload ) );
+	gulp.watch( [ './src/views/**/*', './src/libs/**/*' ], gulp.series( buildWebpack, brSyncReload ) );
 	gulp.watch( './src/html/**/*', gulp.series( copy, brSyncReload ) );
 	gulp.watch( './src/assets/**/*', gulp.series( copy, brSyncReload ) );
 

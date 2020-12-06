@@ -19,6 +19,9 @@ export function Graphics() {
 
 	const dofIntensity = useSelector( ( state: State ) => state.app.dofIntensity );
 	const focalDistance = useSelector( ( state: State ) => state.app.focalDistance );
+	const maxBounce = useSelector( ( state: State ) => state.app.maxBounce );
+	const maxStep = useSelector( ( state: State ) => state.app.maxStep );
+	const rayDistance = useSelector( ( state: State ) => state.app.rayDistance );
 
 	const dispatch = useDispatch();
 
@@ -44,12 +47,15 @@ export function Graphics() {
 
 		if( mainScene ) {
 
-			mainScene.gManager.stateWatcher.updateState( 'dofIntensity', dofIntensity )
-			mainScene.gManager.stateWatcher.updateState( 'focalDistance', focalDistance )
+			mainScene.gManager.stateWatcher.updateState( 'dofIntensity', dofIntensity );
+			mainScene.gManager.stateWatcher.updateState( 'focalDistance', focalDistance );
+			mainScene.gManager.stateWatcher.updateState( 'maxBounce', maxBounce );
+			mainScene.gManager.stateWatcher.updateState( 'maxStep', maxStep );
+			mainScene.gManager.stateWatcher.updateState( 'rayDistance', rayDistance );
 
 		}
 		
-	}, [ mainScene, dofIntensity, focalDistance ] );
+	}, [ mainScene, dofIntensity, focalDistance, maxBounce, maxStep, rayDistance ] );
 
 	return (
 		<div className={ styles["canvas-wrapper"] } ref={canvasWrapperRef}>

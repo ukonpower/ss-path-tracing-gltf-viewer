@@ -124,13 +124,6 @@ export class EditorScene extends THREE.Object3D {
 		this.add( this.cameraTarget );
 		this.touchableObjects.push( this.cameraTarget );
 
-		this.cameraTarget.addEventListener( 'move', () => {
-
-			let forcalDistance = this.cameraTarget.position.distanceTo( this.renderCamera.position );
-			window.gManager.dispatch( appActions.changeFocalDistance( forcalDistance ) );
-
-		} );
-
 		this.transformControls.addEventListener( 'change', ( e ) =>{
 
 			let objName = this.transformControls.object ? this.transformControls.object.name : '';
@@ -138,6 +131,9 @@ export class EditorScene extends THREE.Object3D {
 			if ( objName.match( /CameraTarget|RenderCamera/ ) ) {
 
 				this.renderCamera.lookAt( this.cameraTarget.position );
+
+				let forcalDistance = this.cameraTarget.position.distanceTo( this.renderCamera.position );
+				window.gManager.dispatch( appActions.changeFocalDistance( forcalDistance ) );
 
 			}
 

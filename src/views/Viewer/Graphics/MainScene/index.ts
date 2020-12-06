@@ -71,6 +71,27 @@ export class MainScene extends ORE.BaseLayer {
 
 		} );
 
+		this.gManager.stateWatcher.addEventListener( 'maxBounce', ( e ) => {
+
+			this.orayRenderer.maxBounce = e.state;
+			this.preOrayRenderer.maxBounce = e.state;
+
+		} );
+
+		this.gManager.stateWatcher.addEventListener( 'maxStep', ( e ) => {
+
+			this.orayRenderer.maxStep = e.state;
+			this.preOrayRenderer.maxStep = e.state;
+
+		} );
+
+		this.gManager.stateWatcher.addEventListener( 'rayDistance', ( e ) => {
+
+			this.orayRenderer.rayDistance = e.state;
+			this.preOrayRenderer.rayDistance = e.state;
+
+		} );
+
 	}
 
 	private initScene() {
