@@ -11,6 +11,10 @@ export interface AppState {
 	cameraParam: {
 		dofIntensity: number,
 		fov: number
+	},
+	renderingParam: {
+		width: number,
+		height: number
 	}
 }
 
@@ -24,6 +28,10 @@ const initialState: AppState = {
 	cameraParam: {
 		dofIntensity: 0.1,
 		fov: 45
+	},
+	renderingParam: {
+		width: 1920,
+		height: 1080
 	}
 };
 
@@ -42,6 +50,15 @@ export const appReducer = reducerWithInitialState( initialState )
 		let newState = Object.assign( {}, state );
 		newState.cameraParam = Object.assign( {}, newState.cameraParam );
 		newState.cameraParam[ param.selector ] = param.value;
+
+		return newState;
+
+	} )
+	.case( appActions.updateRenderingState, ( state, param ) => {
+
+		let newState = Object.assign( {}, state );
+		newState.renderingParam = Object.assign( {}, newState.renderingParam );
+		newState.renderingParam[ param.selector ] = param.value;
 
 		return newState;
 

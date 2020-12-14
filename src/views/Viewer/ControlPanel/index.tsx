@@ -4,6 +4,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import * as ReactDOM from 'react-dom';
 import { Actions, State } from '@store';
 import { InputItem } from '@components';
+import { ResolutionInput } from '@components';
 
 import style from './style.scss';
 import { useSelector } from 'react-redux';
@@ -25,8 +26,11 @@ export function ControlPanel() {
 					<InputItem name="Ray Distance" type="slider" min={0} max={3} value={pathTracingParam.rayDistance} actions={ {action: appActions.updatePathTracingState, selector: 'rayDistance' } } ></InputItem>
 				</ParamGroup>
 				<ParamGroup label="Camera">
-					<InputItem name="FOV" type="slider" min={0} max={100} value={cameraParam.fov} actions={ {action: appActions.updateCameraState, selector: 'fov' }} ></InputItem>
+					<InputItem name="FOV" type="slider" min={0} max={180} value={cameraParam.fov} actions={ {action: appActions.updateCameraState, selector: 'fov' }} ></InputItem>
 					<InputItem name="DoF" type="slider" min={0} max={1} value={cameraParam.dofIntensity} actions={ {action: appActions.updateCameraState, selector: 'dofIntensity' }} ></InputItem>
+				</ParamGroup>
+				<ParamGroup label="Rendering">
+					<ResolutionInput/>
 				</ParamGroup>
 
 			</div>

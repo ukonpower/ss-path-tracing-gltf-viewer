@@ -9,12 +9,13 @@ import style from './style.scss';
 
 declare interface inputItemProps {
 	name: string;
-	type: 'slider'|'toggle'
-	actions: { selector: string, action: ActionCreator<any> };
+	type: 'none' | 'slider'|'number'
+	actions?: { selector: string, action: ActionCreator<any> };
 	min?: number;
 	max?: number;
 	value?: number;
 	step?: number;
+	children?: React.ReactNode,
 	onInput?: ((e:Event)=>void)
 }
 
@@ -47,10 +48,15 @@ export function InputItem( props: inputItemProps ) {
 			<input ref={inputElmRef} className={style['inputItem-value']} type="range" min={props.min} max={props.max} defaultValue={props.value} step={props.step || 0.00001}></input>
 			<div className={style['inputItem-value-viewer']} >{props.value}</div>
 		</div>
-	} else {
+	} else if ( props.type == 'number' ) {
 		inputElm= 
 		<div className={style['inputItem-value-wrapper']}>
-			<input ref={inputElmRef} className={style['inputItem-value']} type="range" min={props.min} max={props.max} defaultValue={props.value}></input>
+			<input ref={inputElmRef} className={style['inputItem-value']} type="number" min={props.min} max={props.max} defaultValue={props.value}></input>
+		</div>
+	} else if( props.type == 'none' ) {
+		inputElm =
+		<div>
+			{props.children}
 		</div>
 	}
 
@@ -59,6 +65,6 @@ export function InputItem( props: inputItemProps ) {
 			<div className={style['inputItem-label']}>{props.name}</div>
 			{inputElm}
 		</div>
-	);
+	);	
 
 }

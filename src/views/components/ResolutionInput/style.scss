@@ -1,0 +1,26 @@
+.resolution {
+	position: relative;
+	display: flex;
+	padding-top: 5px;
+	width: 84%;
+
+	&-item {
+		position: relative;
+		display: flex;
+		width: 50%;
+		margin-right: 10px;
+
+		&-label {
+			margin-right: 10px;
+			width: 20%;
+			overflow: hidden;
+			font-size: 14px;
+			white-space: nowrap;
+		}
+
+		&-input {
+			background-color: #CCC;
+			width: 70%;
+		}
+	}
+}

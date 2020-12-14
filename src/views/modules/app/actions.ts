@@ -5,4 +5,5 @@ const actionCreator = actionCreatorFactory();
 export const appActions = {
 	updatePathTracingState: actionCreator<{selector:string, value: any}>( 'ACTIONS_UPDATE_PATH_TRACING' ),
 	updateCameraState: actionCreator<{selector:string, value: any}>( 'ACTIONS_UPDATE_CAMERA' ),
+	updateRenderingState: actionCreator<{selector:string, value: any}>( 'ACTIONS_UPDATE_RENDERING' ),
 };
