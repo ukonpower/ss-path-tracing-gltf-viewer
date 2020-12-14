@@ -24,34 +24,22 @@ export function InputItem( props: inputItemProps ) {
 	const dispatch = useDispatch();
 	const inputElmRef = useRef<HTMLInputElement>();
 
-	useEffect(() => {
-
-		if( inputElmRef.current ){
-
-			inputElmRef.current.addEventListener( 'input', (e) =>{
-
-				let target = e.target as HTMLInputElement;
-					
-				dispatch( props.actions.action({ selector: props.actions.selector, value: target.value }) );
-
-			} );
-			
-		}
-		
-	},[inputElmRef])
-	
 	let inputElm: JSX.Element;
 	
 	if( props.type == 'slider') {
 		inputElm = 
 		<div className={style['inputItem-value-wrapper']}>
-			<input ref={inputElmRef} className={style['inputItem-value']} type="range" min={props.min} max={props.max} defaultValue={props.value} step={props.step || 0.00001}></input>
+			<input ref={inputElmRef} className={style['inputItem-value']} type="range" min={props.min} max={props.max} defaultValue={props.value} step={props.step || 0.00001} onInput={(e)=>{
+				dispatch( props.actions.action({ selector: props.actions.selector, value: (e.target as HTMLInputElement).value }) );
+			}} ></input>
 			<div className={style['inputItem-value-viewer']} >{props.value}</div>
 		</div>
 	} else if ( props.type == 'number' ) {
 		inputElm= 
 		<div className={style['inputItem-value-wrapper']}>
-			<input ref={inputElmRef} className={style['inputItem-value']} type="number" min={props.min} max={props.max} defaultValue={props.value}></input>
+			<input ref={inputElmRef} className={style['inputItem-value']} type="number" min={props.min} max={props.max} defaultValue={props.value} onChange={(e) => {
+				dispatch( props.actions.action({ selector: props.actions.selector, value: (e.target as HTMLInputElement).value }) );
+			}}></input>
 		</div>
 	} else if( props.type == 'none' ) {
 		inputElm =

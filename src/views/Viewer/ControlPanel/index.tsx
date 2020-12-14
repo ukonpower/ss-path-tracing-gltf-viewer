@@ -16,6 +16,7 @@ export function ControlPanel() {
 	
 	const pathTracingParam = useSelector( ( state: State ) => state.app.pathTracingParam );
 	const cameraParam = useSelector( ( state: State ) => state.app.cameraParam );
+	const renderingParam = useSelector( ( state: State ) => state.app.renderingParam );
 
 	return (
 		<div className={style["controlPanel"]}>
@@ -30,6 +31,7 @@ export function ControlPanel() {
 					<InputItem name="DoF" type="slider" min={0} max={1} value={cameraParam.dofIntensity} actions={ {action: appActions.updateCameraState, selector: 'dofIntensity' }} ></InputItem>
 				</ParamGroup>
 				<ParamGroup label="Rendering">
+					<InputItem name="Samples" type="number" min={0} value={renderingParam.samples} actions={ {action: appActions.updateRenderingState, selector: 'samples' }} ></InputItem>
 					<ResolutionInput/>
 				</ParamGroup>
 

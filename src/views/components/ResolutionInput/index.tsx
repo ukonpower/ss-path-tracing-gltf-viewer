@@ -22,14 +22,14 @@ export function ResolutionInput() {
 			<div className={style['resolution']}>
 				<div className={style['resolution-item']}>
 					<p className={style['resolution-item-label']}>X :</p>
-					<input className={style['resolution-item-input']} type="number" value={width} onChange={(e) => {
-						dispatch(appActions.updateRenderingState({selector: 'width', value:e.target.value }))
+					<input className={style['resolution-item-input']} type="number"  value={width} onChange={(e) => {
+						dispatch(appActions.updateRenderingState({selector: 'width', value: Math.min( 4096, Math.max( 0, Number(e.target.value) )) }))
 					}}/>
 				</div>
 				<div className={style['resolution-item']}>
 					<p className={style['resolution-item-label']}>Y :</p>
-					<input className={style['resolution-item-input']} type="number" value={height} onChange={(e) => {
-						dispatch(appActions.updateRenderingState({selector: 'height', value:e.target.value }))
+					<input className={style['resolution-item-input']} type="number"  value={height} onChange={(e) => {
+						dispatch(appActions.updateRenderingState({selector: 'height', value: Math.min( 4096, Math.max( 0, Number(e.target.value) )) }))
 					}}/>
 				</div>
 			</div>

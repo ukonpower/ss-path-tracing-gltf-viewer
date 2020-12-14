@@ -13,6 +13,7 @@ export interface AppState {
 		fov: number
 	},
 	renderingParam: {
+		samples: number,
 		width: number,
 		height: number
 	}
@@ -30,6 +31,7 @@ const initialState: AppState = {
 		fov: 45
 	},
 	renderingParam: {
+		samples: 100,
 		width: 1920,
 		height: 1080
 	}
