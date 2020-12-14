@@ -46,7 +46,12 @@ export class MainScene extends ORE.BaseLayer {
 		this.initRenderer();
 		this.initScene();
 		this.initDropZone();
-		this.resizeRenderer();
+
+		this.gManager.stateWatcher.addEventListener( 'resize', ( e ) => {
+
+			this.resizeRenderer( e.state.width, e.state.height );
+
+		} );
 
 	}
 
@@ -141,13 +146,14 @@ export class MainScene extends ORE.BaseLayer {
 
 	}
 
-	public resizeRenderer() {
+	public resizeRenderer( width: number, height: number ) {
 
-		let size = new THREE.Vector2( window.innerWidth, window.innerHeight );
+		let size = new THREE.Vector2( width, height );
 		let previewSize = size.clone().multiplyScalar( 0.3 );
 
 		this.orayRenderer.resize( size );
 		this.preOrayRenderer.resize( previewSize );
+		this.preOrayRenderer.resetFrame();
 
 		this.editorScene.resizeRenderSize( previewSize );
 

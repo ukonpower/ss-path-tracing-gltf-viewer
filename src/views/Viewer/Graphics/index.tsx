@@ -19,6 +19,7 @@ export function Graphics() {
 
 	const pathTracingParam = useSelector( ( state: State ) => state.app.pathTracingParam );
 	const cameraParam = useSelector( ( state: State ) => state.app.cameraParam );
+	const renderingParam = useSelector( ( state: State ) => state.app.renderingParam );
 
 	const dispatch = useDispatch();
 
@@ -56,7 +57,6 @@ export function Graphics() {
 		
 	}, [ mainScene, pathTracingParam ] );
 
-	
 	useEffect( () => {
 
 		if( mainScene ) {
@@ -72,6 +72,25 @@ export function Graphics() {
 		}
 		
 	}, [ mainScene, cameraParam ] );
+
+	
+	useEffect( () => {
+
+		if( mainScene ) {
+
+			let keys = Object.keys( renderingParam );
+		
+			for (let i = 0; i < keys.length; i++) {
+
+				mainScene.gManager.stateWatcher.updateState( keys[i], renderingParam[keys[i]] );
+				
+			}
+			
+			mainScene.gManager.stateWatcher.updateState( 'resize', { width: renderingParam.width, height: renderingParam.height } );
+
+		}
+		
+	}, [ mainScene, renderingParam ] );
 
 	return (
 		<div className={ styles["canvas-wrapper"] } ref={canvasWrapperRef}>

@@ -15,7 +15,8 @@ void main( void ) {
 	pos.y /= max( previewAspect, 1.0 );
 	pos.x *= min( previewAspect, 1.0 );
 
-	pos *= 0.8;
+	pos *= 1.0 / editorAspect;
+	pos *= 0.8 * ( min( 1.0, abs( 1.0 - previewAspect ) ) * 0.2 + 0.8 );
 
 	pos.x += 0.9;
 	pos.y -= 0.9;
