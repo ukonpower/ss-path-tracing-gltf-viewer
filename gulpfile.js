@@ -121,6 +121,12 @@ function watch() {
 
 }
 
+exports.build = gulp.series(
+	clean,
+	gulp.parallel( buildWebpack ),
+	copy,
+);
+
 exports.default = gulp.series(
 	clean,
 	gulp.parallel( buildWebpack ),
