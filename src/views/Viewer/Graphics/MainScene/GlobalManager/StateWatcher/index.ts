@@ -8,7 +8,7 @@ export class StateWatcher extends ORE.EventDispatcher {
 
 	}
 
-	public updateState( stateType: string, state: any ) {
+	public updateState( stateType: string, state?: any ) {
 
 		this.dispatchEvent( {
 			type: stateType,

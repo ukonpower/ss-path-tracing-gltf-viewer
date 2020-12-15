@@ -35,7 +35,11 @@ export function ControlPanel() {
 					<ResolutionInput/>
 					<InputItem name="Samples" type="number" min={0} value={renderingParam.samples} actions={ {action: appActions.updateRenderingState, selector: 'samples' }} flex={false} ></InputItem>
 					<RenderingButton onClick={(e)=>{
-						console.log( e );
+						if( window.gManager && window.gManager.stateWatcher ) {
+
+							window.gManager.stateWatcher.updateState( 'rendering' );
+							
+						}
 					}} />
 				</ParamGroup>
 			</div>

@@ -19,6 +19,8 @@ export class MainScene extends ORE.BaseLayer {
 	private currentGLTFScene: THREE.Group;
 
 	private simpleDropZone: any;
+	private samples: number = 0;
+	private isRendering: boolean = false;
 
 	private dispatch: any;
 
@@ -97,6 +99,18 @@ export class MainScene extends ORE.BaseLayer {
 
 		} );
 
+		this.gManager.stateWatcher.addEventListener( 'samples', ( e ) => {
+
+			this.samples = e.state;
+
+		} );
+
+		this.gManager.stateWatcher.addEventListener( 'rendering', ( e ) => {
+
+			this.rendering();
+
+		} );
+
 	}
 
 	private initScene() {
@@ -112,27 +126,62 @@ export class MainScene extends ORE.BaseLayer {
 
 	}
 
+	private rendering() {
+
+		this.isRendering = true;
+
+		this.orayRenderer.resetFrame();
+
+		let renderTarget = this.renderer.getRenderTarget();
+		this.renderer.setRenderTarget( null );
+		this.editorScene.visible = false;
+
+		this.switchPathTracingMaterial( true );
+
+		this.renderer.setSize( this.orayRenderer.dataSize.x, this.orayRenderer.dataSize.y );
+
+		for ( let i = 0; i < this.samples; i ++ ) {
+
+			this.orayRenderer.render( this.scene, this.editorScene.renderCamera );
+
+		}
+
+		var a = document.createElement( 'a' );
+		a.href = this.info.canvas.toDataURL().replace( "image/png", "image/octet-stream" );
+		a.download = 'img.png';
+		a.click();
+
+		this.renderer.setRenderTarget( renderTarget );
+		this.onResize();
+		this.isRendering = false;
+
+	}
+
 	public animate( deltaTime: number ) {
 
 		this.commonUniforms.time.value = this.time;
 
-		this.editorScene.update();
+		if ( ! this.isRendering ) {
 
-		this.editorScene.visible = false;
-		this.switchMaterial( true );
+			this.editorScene.update();
 
-		this.renderer.setRenderTarget( this.editorScene.previewRenderTarget );
-		this.preOrayRenderer.render( this.scene, this.editorScene.renderCamera );
-		this.renderer.setRenderTarget( null );
+			this.editorScene.visible = false;
+			this.switchPathTracingMaterial( true );
 
-		this.editorScene.visible = true;
-		this.switchMaterial( false );
+			this.renderer.setRenderTarget( this.editorScene.previewRenderTarget );
+			this.preOrayRenderer.render( this.scene, this.editorScene.renderCamera );
+			this.renderer.setRenderTarget( null );
 
-		this.renderer.render( this.scene, this.editorScene.editorCamera );
+			this.editorScene.visible = true;
+			this.switchPathTracingMaterial( false );
+
+			this.renderer.render( this.scene, this.editorScene.editorCamera );
+
+		}
 
 	}
 
-	private switchMaterial( isOray: boolean ) {
+	private switchPathTracingMaterial( isOray: boolean ) {
 
 		this.currentGLTFScene && this.currentGLTFScene.traverse( obj => {
 
