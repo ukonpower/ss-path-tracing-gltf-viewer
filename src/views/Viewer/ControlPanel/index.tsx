@@ -5,6 +5,7 @@ import * as ReactDOM from 'react-dom';
 import { Actions, State } from '@store';
 import { InputItem } from '@components';
 import { ResolutionInput } from '@components';
+import { RenderingButton } from '@components';
 
 import style from './style.scss';
 import { useSelector } from 'react-redux';
@@ -31,10 +32,12 @@ export function ControlPanel() {
 					<InputItem name="DoF" type="slider" min={0} max={1} value={cameraParam.dofIntensity} actions={ {action: appActions.updateCameraState, selector: 'dofIntensity' }} ></InputItem>
 				</ParamGroup>
 				<ParamGroup label="Rendering">
-					<InputItem name="Samples" type="number" min={0} value={renderingParam.samples} actions={ {action: appActions.updateRenderingState, selector: 'samples' }} ></InputItem>
 					<ResolutionInput/>
+					<InputItem name="Samples" type="number" min={0} value={renderingParam.samples} actions={ {action: appActions.updateRenderingState, selector: 'samples' }} flex={false} ></InputItem>
+					<RenderingButton onClick={(e)=>{
+						console.log( e );
+					}} />
 				</ParamGroup>
-
 			</div>
 		</div>
 	);

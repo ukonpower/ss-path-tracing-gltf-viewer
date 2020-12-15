@@ -3,10 +3,19 @@
 	width: 100%;
 	margin-bottom: 10px;	
 
+	&[data-flex="true"] {
+		display: flex;	
+	}
+
 	&-label {
 		font-size: 14px;
 		color: #AAA;
 		margin-bottom: 5px;
+
+		[data-flex="true"] &{
+			margin-bottom: 0;
+			margin-right: 10px;
+		}
 	}
 
 	&-value{

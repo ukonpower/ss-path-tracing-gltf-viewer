@@ -16,6 +16,7 @@ declare interface inputItemProps {
 	value?: number;
 	step?: number;
 	children?: React.ReactNode,
+	flex?: boolean;
 	onInput?: ((e:Event)=>void)
 }
 
@@ -49,7 +50,7 @@ export function InputItem( props: inputItemProps ) {
 	}
 
 	return (
-		<div className={style['inputItem']}>
+		<div className={style['inputItem']} data-flex={props.flex}>
 			<div className={style['inputItem-label']}>{props.name}</div>
 			{inputElm}
 		</div>
