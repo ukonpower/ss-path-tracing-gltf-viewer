@@ -1,6 +1,6 @@
 [submodule "src/ts/libs/OrayTracingRenderer"]
-	path = src/ts/libs/OrayTracingRenderer
+	path = src/libs/OrayTracingRenderer
 	url = https://github.com/ukonpower/OrayTracingRenderer.git
 [submodule "src/ts/libs/ore-three-ts"]
-	path = src/ts/libs/ore-three-ts
+	path = src/libs/ore-three-ts
 	url = https://github.com/ukonpower/ore-three-ts.git
