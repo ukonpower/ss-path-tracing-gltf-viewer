@@ -13,7 +13,7 @@ export class CameraTarget extends THREE.Mesh {
 
 		let geo = new THREE.SphereBufferGeometry( 0.2, 1.0, 1.0 );
 
-		let uni = ORE.UniformsLib.CopyUniforms( parentUniforms, {
+		let uni = ORE.UniformsLib.mergeUniforms( parentUniforms, {
 		} );
 
 		let mat = new THREE.ShaderMaterial( {

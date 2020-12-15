@@ -12,7 +12,7 @@ export class RenderCamera extends THREE.PerspectiveCamera {
 
 		this.name = 'RenderCamera';
 
-		this.commonUniforms = ORE.UniformsLib.CopyUniforms( parentUniforms, {
+		this.commonUniforms = ORE.UniformsLib.mergeUniforms( parentUniforms, {
 		} );
 
 		this.init();

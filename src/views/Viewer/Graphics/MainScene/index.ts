@@ -30,7 +30,7 @@ export class MainScene extends ORE.BaseLayer {
 
 		this.dispatch = dispatch;
 
-		this.commonUniforms = ORE.UniformsLib.CopyUniforms( this.commonUniforms, {
+		this.commonUniforms = ORE.UniformsLib.mergeUniforms( this.commonUniforms, {
 
 		} );
 

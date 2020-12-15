@@ -10,7 +10,7 @@ export class Viewer extends THREE.Mesh {
 
 	constructor( parentUniforms?: ORE.Uniforms ) {
 
-		let uni = ORE.UniformsLib.CopyUniforms( {
+		let uni = ORE.UniformsLib.mergeUniforms( {
 		}, parentUniforms );
 
 		let geo = new THREE.PlaneBufferGeometry( 1.0, 1.0 );

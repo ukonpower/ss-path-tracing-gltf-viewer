@@ -42,7 +42,7 @@ export class EditorScene extends THREE.Object3D {
 
 		this.wrapperElm = elm;
 
-		this.commonUniforms = ORE.UniformsLib.CopyUniforms( {
+		this.commonUniforms = ORE.UniformsLib.mergeUniforms( {
 			editorAspect: {
 				value: 1.0
 			},
