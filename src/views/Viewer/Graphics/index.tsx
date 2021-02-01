@@ -92,8 +92,28 @@ export function Graphics() {
 		
 	}, [ mainScene, renderingParam ] );
 
+	const dropzoneRef = useRef<HTMLDivElement>();
+	const fileInputRef = useRef<HTMLInputElement>();
+	
+	useEffect(()=>{
+
+		if( mainScene && fileInputRef && dropzoneRef ) {
+
+			mainScene.initDropZone(dropzoneRef.current, fileInputRef.current);
+			
+		}
+		
+	},[mainScene, fileInputRef, dropzoneRef])
+
 	return (
 		<div className={ styles["canvas-wrapper"] } ref={canvasWrapperRef}>
+			<div className={ styles["dropzone"] } ref={dropzoneRef}>
+				<div className={ styles["dropzone_inner"] }>
+					<p>Drag glTF file here</p>
+					<input type="file" className="file-input" ref={fileInputRef}></input>
+				</div>
+			</div>
+
 			<canvas className={ styles["canvas"] } ref={ canvasRef }></canvas>
 		</div>
 	);

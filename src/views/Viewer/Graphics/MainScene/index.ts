@@ -47,7 +47,6 @@ export class MainScene extends ORE.BaseLayer {
 
 		this.initRenderer();
 		this.initScene();
-		this.initDropZone();
 
 		this.gManager.stateWatcher.addEventListener( 'resize', ( e ) => {
 
@@ -239,27 +238,26 @@ export class MainScene extends ORE.BaseLayer {
 
 	}
 
-	private initDropZone() {
+	public initDropZone( dropzoneElm: HTMLDivElement, fileInputElm: HTMLInputElement ) {
 
-		// this.simpleDropZone = new SimpleDropzone(
-		// 	document.querySelector( '.dropzone' ),
-		// 	document.querySelector( '.file-input' )
-		// );
+		this.simpleDropZone = new SimpleDropzone(
+			dropzoneElm,
+			fileInputElm
+		);
 
-		document.body.setAttribute( 'data-loaded', 'true' );
-		this.load( './assets/webgl-path-tracing.glb' );
+		this.simpleDropZone.on( 'drop', ( { files } ) => {
 
-		// this.simpleDropZone.on( 'drop', ( { files } ) => {
+			document.body.setAttribute( 'data-loaded', 'true' );
 
-		// 	files.forEach( ( value, key ) => {
+			files.forEach( ( value, key ) => {
 
-		// 		let url = URL.createObjectURL( value );
+				let url = URL.createObjectURL( value );
 
-		// 		this.load( url );
+				this.load( url );
 
-		// 	} );
+			} );
 
-		// } );
+		} );
 
 	}
 
